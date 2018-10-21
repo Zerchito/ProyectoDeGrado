@@ -1,0 +1,7 @@
+#1.- Definir los modos de interacción de manera que no obligue a que el usuario realice acciones innecesarias y no deseadas. (Entrar y salir de módulos a voluntad y sin esfuerzo);
+#2.- Tener en consideración una interacción flexible. (Ampliar variedad de elementos de interacción);
+#3.- Permitir que la interacción del usuario se pueda interrumpir y deshacer. (Modificar sin perder el trabajo realizado);
+#4.- Aligerar la interacción a medida que avanza el nivel de conocimiento y permitir personalizar la interacción. (Si el usuario está familiarizado ofrecer atajos);
+#5.- Ocultar al usuario ocasional los entresijos técnicos. (Evitar que el usuario manipule directamente el Lenguaje);
+#6.- Diseñar la interacción directa con los objetos que aparecen en la pantalla. (Lo que puede ver lo puede modificar);
+

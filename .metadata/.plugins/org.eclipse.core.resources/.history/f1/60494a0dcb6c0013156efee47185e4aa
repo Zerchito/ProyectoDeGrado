@@ -1,0 +1,447 @@
+package Interfaz;
+import javax.swing.;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.border.*;
+import InterfazBase.*;
+import ModuloBase.*;
+
+public class VentanaPrincipal extends JFrame implements ActionListener
+{	
+	//Elementos del Frame
+	public JMenu menu_total;
+	public JMenuBar menubar_total;
+	public JMenu menu_edicion;
+
+	public JMenu menu_archivo;
+	public JMenu menu_nuevo;
+	public JMenu menu_guardar;
+	public JMenu menu_prototipo;
+	public JMenu menu_consejero;
+	public JMenu menu_recuperar;
+	public JMenuItem menuitem_instancia;
+	public JMenuItem menuitem_nuevo_entorno;
+	public JMenuItem menuitem_recuperar_entorno;
+	public JMenuItem menuitem_recuperar_plantilla;
+	public JMenuItem menuitem_guardar_entorno;
+	public JMenuItem menuitem_guardar_plantilla;
+	public JMenuItem menuitem_exportar;
+	public JMenuItem menuitem_copiar;
+	public JMenuItem menuitem_pegar;
+	public JMenuItem menuitem_bitacora;
+	public JMenuItem menuitem_salir;
+	
+	public JMenu menu_herramientas;
+	public JMenuItem menuitem_herramientas_wizard;
+	public JMenuItem menuitem_herramientas_trainer;
+	public JMenuItem menuitem_herramientas_prototipored;
+	public JMenuItem menuitem_herramientas_prototipoeventos_activado;
+	public JMenuItem menuitem_herramientas_prototipoeventos_desactivado;
+	public JMenuItem menuitem_herramientas_consejero_activado;
+	public JMenuItem menuitem_herramientas_consejero_desactivado;
+	public JMenuItem menuitem_herramientas_version;
+	
+	public JMenu menu_ayuda;
+	public JMenuItem menuitem_ayuda_temas;
+	
+	
+	//paneles principales
+	public JPanel panel_centro;
+	public JPanel panel_oeste;
+	public JPanel panel_sud;
+	public JPanel panel_sud_centro;
+	public JPanel panel_sud_sud;
+	//paneles secundarios oeste
+	public PanelPropiedades panel_propiedad;
+	public PanelColorFondo color_selector;
+	public PanelColorTexto color_selector_texto;
+	public PanelFuenteTexto fuente_texto;
+	public PanelEventos panel_eventos;
+	//paneles secundarios centro_norte
+	public PanelOpciones panel_opciones;
+	//paneles secundarios sud
+	// public PanelVector panel_vector;
+	public PanelClick panel_click;
+	public PanelPuntero panel_puntero;
+	public PanelIndicador panel_indicador;
+	//paneles secundarios sud_centro
+	public PanelConsejero panel_consejero;
+	//paneles contenedores centro_centro
+	public JTabbedPane carga_ranuras;
+	public JPanel carga_pantallas;
+	
+	public FuncionBase funcion_base;
+	
+	public SeparaArgumento separa_argumento;
+		
+	public VentanaPrincipal()
+	{
+		funcion_base=new FuncionBase(this);
+		//Configuracion del Frame principal
+		setTitle("HERRAMIENTA DE APOYO PARA CREACION DE INTERFACES GRAFICAS");
+		setVisible(true);
+		setLayout(new BorderLayout());
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		if(((int)screenSize.getWidth()<=800)&&((int)screenSize.getHeight()<=600))
+		{
+		setSize(752,562);
+		}
+		else
+		{
+		setSize((int)screenSize.getWidth()*5/8,(int)screenSize.getHeight()*6/8);
+		}
+		setLocation((int)screenSize.getWidth()*1/10,(int)screenSize.getHeight()*1/10);
+		setMinimumSize(new Dimension(750,560));
+		setDefaultCloseOperation(0);
+		
+		ImageIcon icono = new ImageIcon("Soporte/Imagenes/icono.png");
+		this.setIconImage(icono.getImage());
+		
+		//Configuracion del Menu principal
+		menubar_total = new JMenuBar();
+		menu_archivo = new JMenu("Archivo");
+		menu_edicion = new JMenu("Edicion");
+		
+		menu_nuevo=new JMenu("Nuevo...");
+		menu_archivo.add(menu_nuevo);
+		
+		menu_recuperar=new JMenu("Recuperar... ");
+		menu_archivo.add(menu_recuperar);
+		
+		menuitem_recuperar_entorno=new JMenuItem("Entorno seralizado");
+		menuitem_recuperar_entorno.setMnemonic(KeyEvent.VK_R);
+		menuitem_recuperar_entorno.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+		menu_recuperar.add(menuitem_recuperar_entorno);
+		
+		menuitem_recuperar_plantilla=new JMenuItem("Plantilla serailizada");
+		menu_recuperar.add(menuitem_recuperar_plantilla);
+		
+		
+		menuitem_instancia=new JMenuItem("Entorno de trabajo");
+		menuitem_instancia.setMnemonic(KeyEvent.VK_I);
+		menuitem_instancia.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
+		menu_nuevo.add(menuitem_instancia);
+		
+		menuitem_nuevo_entorno=new JMenuItem("Ranura de edicion");
+		menuitem_nuevo_entorno.setMnemonic(KeyEvent.VK_P);
+		menuitem_nuevo_entorno.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
+		menu_nuevo.add(menuitem_nuevo_entorno);
+		
+		menu_guardar=new JMenu("Guardar como...");
+		menu_archivo.add(menu_guardar);
+		
+		menuitem_guardar_entorno=new JMenuItem("Entorno actual");
+		menuitem_guardar_entorno.setMnemonic(KeyEvent.VK_G);
+		menuitem_guardar_entorno.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
+		menu_guardar.add(menuitem_guardar_entorno);
+		
+		menuitem_guardar_plantilla=new JMenuItem("Plantilla personalizada");
+		// menuitem_guardar_plantilla.setMnemonic(KeyEvent.VK_G);
+		// menuitem_guardar_plantilla.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
+		menu_guardar.add(menuitem_guardar_plantilla);
+		
+		
+		menuitem_copiar=new JMenuItem("Copiar");
+		menuitem_copiar.setMnemonic(KeyEvent.VK_D);
+		menuitem_copiar.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK));
+		menu_edicion.add(menuitem_copiar);
+		
+		menuitem_pegar=new JMenuItem("Pegar");
+		menuitem_pegar.setMnemonic(KeyEvent.VK_F);
+		menuitem_pegar.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
+		menu_edicion.add(menuitem_pegar);
+		
+		
+		
+		menuitem_exportar=new JMenuItem("Exportar Script");
+		menuitem_exportar.setMnemonic(KeyEvent.VK_X);
+		menuitem_exportar.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+		menu_edicion.add(menuitem_exportar);
+		
+		
+		
+		menuitem_bitacora=new JMenuItem("Iniciar Bitacora");
+		menuitem_bitacora.setMnemonic(KeyEvent.VK_B);
+		menuitem_bitacora.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK));
+		menu_edicion.add(menuitem_bitacora);
+		
+		
+		menuitem_salir=new JMenuItem("Salir");
+		menuitem_salir.setMnemonic(KeyEvent.VK_F4);
+		menuitem_salir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
+		menu_archivo.add(menuitem_salir);
+		
+		menu_herramientas = new JMenu("Herramientas");
+		menuitem_herramientas_wizard=new JMenuItem("Wizard");
+		menuitem_herramientas_wizard.setMnemonic(KeyEvent.VK_W);
+		menuitem_herramientas_wizard.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
+		menu_herramientas.add(menuitem_herramientas_wizard);
+		menuitem_herramientas_trainer=new JMenuItem("Trainer");
+		menuitem_herramientas_trainer.setMnemonic(KeyEvent.VK_T);
+		menuitem_herramientas_trainer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
+		menu_herramientas.add(menuitem_herramientas_trainer);
+		
+		menu_prototipo=new JMenu("Prototipo...");
+		menu_herramientas.add(menu_prototipo);
+		
+		menuitem_herramientas_prototipored=new JMenuItem("Diagrama de red");
+		menuitem_herramientas_prototipored.setMnemonic(KeyEvent.VK_N);
+		menuitem_herramientas_prototipored.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+		menu_prototipo.add(menuitem_herramientas_prototipored);
+		
+		menuitem_herramientas_prototipoeventos_activado=new JMenuItem("Activar modo eventos");
+		menuitem_herramientas_prototipoeventos_activado.setMnemonic(KeyEvent.VK_E);
+		menuitem_herramientas_prototipoeventos_activado.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+		menu_prototipo.add(menuitem_herramientas_prototipoeventos_activado);
+		
+		menuitem_herramientas_prototipoeventos_desactivado=new JMenuItem("Desactivar modo eventos");
+		// menuitem_herramientas_prototipoeventos_desactivado.setMnemonic(KeyEvent.VK_E);
+		// menuitem_herramientas_prototipoeventos_desactivado.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+		menu_prototipo.add(menuitem_herramientas_prototipoeventos_desactivado);
+		
+		menu_consejero=new JMenu("Consejero...");
+		menu_herramientas.add(menu_consejero);
+		
+		menuitem_herramientas_consejero_activado=new JMenuItem("Activar modo consejero");
+		menu_consejero.add(menuitem_herramientas_consejero_activado);
+		
+		menuitem_herramientas_consejero_desactivado=new JMenuItem("Desactivar modo consejero");
+		menu_consejero.add(menuitem_herramientas_consejero_desactivado);
+		
+		
+		menuitem_herramientas_version=new JMenuItem("Version");
+		menu_herramientas.add(menuitem_herramientas_version);
+		
+		menu_ayuda = new JMenu("Ayuda");
+		menuitem_ayuda_temas=new JMenuItem("Temas");
+		menu_ayuda.add(menuitem_ayuda_temas);
+		
+		menubar_total.add(menu_archivo);
+		menubar_total.add(menu_edicion);
+		menubar_total.add(menu_herramientas);
+		menubar_total.add(menu_ayuda);
+		setJMenuBar(menubar_total); 
+		
+		panel_oeste=new JPanel();
+		panel_oeste.setLayout(null);
+		panel_oeste.setPreferredSize(new java.awt.Dimension(202,0));
+		add("West",panel_oeste);
+		
+		panel_propiedad=new PanelPropiedades(funcion_base);
+		panel_propiedad.setLocation(0,3);
+		panel_oeste.add(panel_propiedad);
+		
+		panel_centro=new JPanel();
+		panel_centro.setBackground(new Color(140,180,225));
+		panel_centro.setLayout(new BorderLayout());
+		panel_centro.setBorder(new SoftBevelBorder(BevelBorder.LOWERED)) ;
+		add("Center",panel_centro);
+		
+		
+		  
+		  
+		
+		panel_sud=new JPanel();
+		panel_sud.setLayout(new BorderLayout());
+		panel_sud.setBackground(Color.white);
+		add("South",panel_sud);
+		
+		panel_opciones=new PanelOpciones(funcion_base);
+		panel_opciones.setLocation(0,0);
+		panel_centro.add("North",panel_opciones);
+		
+		panel_consejero=new PanelConsejero(funcion_base);
+		panel_centro.add("South",panel_consejero);
+		
+		
+		panel_sud_sud=new JPanel();
+		panel_sud_sud.setVisible(true);
+		panel_sud_sud.setLayout(null);
+		panel_sud_sud.setPreferredSize(new java.awt.Dimension(500,30));    
+		// panel_sud_sud.setBorder(new EtchedBorder());
+		panel_sud.add("South",panel_sud_sud);
+		
+		panel_sud_centro=new JPanel();
+		panel_sud_centro.setLayout(null);
+		panel_sud.add("Center",panel_sud_centro);
+		
+		carga_ranuras=new JTabbedPane();
+		// carga_ranuras.setTabPlacement(JTabbedPane.BOTTOM);
+		carga_ranuras.setBackground(Color.white);
+		panel_centro.add("Center",carga_ranuras);
+		
+		
+		
+		
+		
+		color_selector= new PanelColorFondo(funcion_base);
+		color_selector.label_muestra.setText("Color - Fondo:");
+		color_selector.setLocation(0,135);
+		color_selector.setLayout(null);
+		panel_oeste.add(color_selector); 
+		
+		color_selector_texto= new PanelColorTexto(funcion_base);
+		color_selector_texto.label_muestra.setText("Color - Texto:");
+		color_selector_texto.setLocation(0,227);
+		color_selector_texto.setLayout(null);
+		panel_oeste.add(color_selector_texto); 
+		
+		fuente_texto= new PanelFuenteTexto(funcion_base);
+		fuente_texto.label_muestra.setText("Fuente:");
+		fuente_texto.setLocation(0,320);
+		fuente_texto.setLayout(null);
+		panel_oeste.add(fuente_texto); 
+		
+		panel_eventos=new PanelEventos(funcion_base);
+		panel_eventos.setLocation(0,393);
+		panel_eventos.setLayout(null);
+		panel_oeste.add(panel_eventos);
+		
+		panel_puntero=new PanelPuntero();
+		panel_puntero.setLocation(5,0);
+		panel_sud_sud.add(panel_puntero);
+		
+		panel_click=new PanelClick();
+		panel_click.setLocation(155,0);
+		panel_sud_sud.add(panel_click);
+		
+		panel_indicador=new PanelIndicador();
+		panel_indicador.setLocation(290,0);
+		panel_sud_sud.add(panel_indicador);
+		
+		// panel_vector=new PanelVector();
+		// panel_vector.setLocation(535,0);
+		// panel_sud_sud.add(panel_vector);
+		
+		separa_argumento=new SeparaArgumento(this);
+		
+		menuitem_recuperar_entorno.addActionListener(this);
+		menuitem_recuperar_plantilla.addActionListener(this);
+		menuitem_instancia.addActionListener(this);
+		menuitem_nuevo_entorno.addActionListener(this);
+		menuitem_guardar_entorno.addActionListener(this);
+		menuitem_guardar_plantilla.addActionListener(this);
+		menuitem_exportar.addActionListener(this);
+		menuitem_herramientas_wizard.addActionListener(this);
+		menuitem_herramientas_trainer.addActionListener(this);
+		menuitem_herramientas_prototipored.addActionListener(this);
+		menuitem_herramientas_prototipoeventos_activado.addActionListener(this);
+		menuitem_herramientas_prototipoeventos_desactivado.addActionListener(this);
+		menuitem_herramientas_consejero_activado.addActionListener(this);
+		menuitem_herramientas_consejero_desactivado.addActionListener(this);
+		menuitem_bitacora.addActionListener(this);
+		menuitem_salir.addActionListener(this);
+		menuitem_ayuda_temas.addActionListener(this);
+		menuitem_copiar.addActionListener(this);
+		menuitem_pegar.addActionListener(this);
+		
+		
+		
+		this.setSize(this.getWidth()-1,this.getHeight()-1);
+		
+		
+		addWindowListener(new WindowAdapter() 
+		{
+		    public void windowClosing (WindowEvent e) 
+		    { 
+		           funcion_base.verificarCerrado();
+		 
+		    }
+		    
+		}
+		);
+		
+	
+	}
+	
+	//Acciones para los Eventos
+	public void actionPerformed(ActionEvent ae)
+	{
+	
+	    if(ae.getSource()==menuitem_instancia)
+	    {
+	        funcion_base.nuevaInstancia();
+	    }
+	
+	    if(ae.getSource()==menuitem_nuevo_entorno)
+	    {
+	        funcion_base.nuevoEntorno();
+	    }
+	
+	    if(ae.getSource()==menuitem_salir)
+	    {
+	        funcion_base.salir();
+	        
+	    }      
+	    if(ae.getSource()==menuitem_guardar_entorno)
+	    {
+	        funcion_base.guardarEntorno();
+	    }
+	
+	    if(ae.getSource()==menuitem_guardar_plantilla)
+	    {
+	        funcion_base.guardarPlantilla();
+	    }    
+	     if(ae.getSource()==menuitem_recuperar_entorno)
+	    {
+	        funcion_base.recuperarEntorno();
+	    }
+	    
+	     if(ae.getSource()==menuitem_recuperar_plantilla)
+	    {
+	        funcion_base.recuperarPlantilla();
+	    }    
+	
+	     if(ae.getSource()==menuitem_exportar)
+	    {
+	        funcion_base.exportarScript();
+	    } 
+	     if(ae.getSource()==menuitem_copiar)
+	    {
+	        funcion_base.copiarWidget();
+	    } 
+	     if(ae.getSource()==menuitem_pegar)
+	    {
+	        funcion_base.pegarWidget();
+	    }   
+	    
+	    
+	     if(ae.getSource()==menuitem_herramientas_wizard)
+	    {
+	        funcion_base.iniciarWizard();
+	    } 
+	     if(ae.getSource()==menuitem_herramientas_trainer)
+	    {
+	        funcion_base.iniciarTrainer();
+	    } 
+	     if(ae.getSource()==menuitem_herramientas_prototipored)
+	    {
+	        funcion_base.iniciarPrototipo();
+	    }     
+	    
+	     if(ae.getSource()==menuitem_herramientas_prototipoeventos_activado)
+	    {
+	        funcion_base.iniciarEventos();
+	    }     
+	     if(ae.getSource()==menuitem_herramientas_prototipoeventos_desactivado)
+	    {
+	        funcion_base.detenerEventos();
+	    }  
+	    
+	     if(ae.getSource()==menuitem_herramientas_consejero_activado)
+	    {
+	        funcion_base.iniciarConsejero();
+	    }     
+	     if(ae.getSource()==menuitem_herramientas_consejero_desactivado)
+	    {
+	//         funcion_base.detenerConsejero();
+	    }     
+	    if(ae.getSource()==menuitem_ayuda_temas)
+	    {
+	        funcion_base.iniciarAyuda();
+	    }
+	    }
+	    
+	
+}
+

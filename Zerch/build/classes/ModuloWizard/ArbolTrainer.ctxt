@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.params=t
+comment0.target=ArbolTrainer(VentanaTrainer)
+comment1.params=e
+comment1.target=void\ valueChanged(TreeSelectionEvent)
+comment2.params=event
+comment2.target=void\ treeExpanded(TreeExpansionEvent)
+comment3.params=event
+comment3.target=void\ treeCollapsed(TreeExpansionEvent)
+comment4.target=String\ getArbolpath()
+numComments=5

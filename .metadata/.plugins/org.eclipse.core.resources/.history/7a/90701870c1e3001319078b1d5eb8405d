@@ -1,0 +1,86 @@
+import Conexion.IUsuario;
+import java.net.InetAddress;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+
+/**
+ *  Informacion necesaria del usuario en el Chat
+ * @author zerch
+ */
+public class Usuario extends UnicastRemoteObject implements IUsuario
+{
+    private String nombre;
+    private int puerto;
+    private String ip;
+    private Conector conector;
+    
+    /**
+     * Constructor de la clase;  
+     * @param nombre identificador del usuario;
+     * @param puerto puerto para recibir los datos;
+     * @throws RemoteException 
+     */
+    public Usuario(String nombre, int puerto, Conector conector) throws RemoteException
+    {
+        this.nombre = nombre;
+        this.puerto = puerto;
+        ip = obtenerIp();
+        this.conector = conector;
+    }
+    
+    /**
+     * metodo para obtener la direccion ip.
+     * @return retorna la direccon ip de la maquina en la que se encuentra el usuario
+     * @throws RemoteException 
+     */
+    private String obtenerIp() throws RemoteException
+    {
+        String respuesta;
+    	try 
+        {
+            InetAddress host = InetAddress.getLocalHost();
+            respuesta = host.getHostAddress();
+        }
+        catch (Exception e) 
+        {
+            throw new RemoteException("No se puede obtener la direccion IP.");
+	}
+        return respuesta;
+    }
+    
+    /**
+     * 
+     * @return ip del usuario
+     */
+    @Override
+    public String getIp()
+    {
+        return ip;
+    }
+    
+    /**
+     * 
+     * @return puerto del usuario 
+     */
+    @Override
+    public int getPort()
+    {
+        return puerto;
+    }
+    
+    /**
+     * 
+     * @return nombre del usuario
+     */
+    @Override
+    public String getName()
+    {
+        return nombre;
+    }
+    
+    @Override
+    public void update(String mensajes) throws RemoteException
+    {
+        conector.update(mensajes);
+    }
+}

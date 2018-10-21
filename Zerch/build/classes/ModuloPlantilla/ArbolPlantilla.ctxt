@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.params=a
+comment0.target=ArbolPlantilla(VentanaPlantilla)
+comment1.params=ae
+comment1.target=void\ actionPerformed(ActionEvent)
+comment2.params=e
+comment2.target=void\ valueChanged(TreeSelectionEvent)
+comment3.params=event
+comment3.target=void\ treeExpanded(TreeExpansionEvent)
+comment4.params=event
+comment4.target=void\ treeCollapsed(TreeExpansionEvent)
+numComments=5

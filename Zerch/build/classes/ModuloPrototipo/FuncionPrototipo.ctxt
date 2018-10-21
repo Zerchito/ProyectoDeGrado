@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.params=v
+comment0.target=FuncionPrototipo(VentanaPrototipo)
+comment1.params=g
+comment1.target=void\ paint(Graphics)
+comment10.params=ni\ nf
+comment10.target=void\ dibujarEnlace(Nodo,\ Nodo)
+comment2.params=evt
+comment2.target=void\ formMouseClicked(java.awt.event.MouseEvent)
+comment3.params=evt
+comment3.target=void\ formMouseDragged(java.awt.event.MouseEvent)
+comment4.params=evt
+comment4.target=void\ formMouseReleased(java.awt.event.MouseEvent)
+comment5.params=evt
+comment5.target=void\ formMousePressed(java.awt.event.MouseEvent)
+comment6.params=vnonull
+comment6.target=void\ ajustarNodos(Vector)
+comment7.params=v
+comment7.target=void\ ajustarEnlaces(Vector)
+comment8.params=fp
+comment8.target=void\ setFuncionBase(FuncionBase)
+comment9.target=void\ mostrarVectores()
+numComments=11

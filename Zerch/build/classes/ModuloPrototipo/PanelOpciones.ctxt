@@ -1,0 +1,8 @@
+#BlueJ class context
+comment0.params=i
+comment0.target=PanelOpciones(VentanaPrototipo)
+comment1.params=ae
+comment1.target=void\ actionPerformed(ActionEvent)
+comment2.params=nombre
+comment2.target=void\ actualizarClickeado(String)
+numComments=3

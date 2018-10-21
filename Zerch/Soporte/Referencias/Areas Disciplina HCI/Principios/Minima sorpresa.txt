@@ -1,0 +1,5 @@
+#1.- Acción-efecto similar en cualquier contexto y estado;
+#2.- Indicar al usuario en qué modo se encuentra;
+
+
+

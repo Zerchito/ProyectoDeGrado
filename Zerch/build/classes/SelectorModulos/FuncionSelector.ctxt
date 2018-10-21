@@ -1,0 +1,8 @@
+#BlueJ class context
+comment0.params=vs
+comment0.target=FuncionSelector(VentanaSelector)
+comment1.target=void\ nuevoModuloBase()
+comment2.target=void\ nuevoModuloTrainer()
+comment3.target=void\ nuevoModuloWizard()
+comment4.target=void\ nuevoSoporteAyuda()
+numComments=5

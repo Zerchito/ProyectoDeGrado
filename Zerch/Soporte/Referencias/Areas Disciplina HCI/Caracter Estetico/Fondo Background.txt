@@ -1,0 +1,6 @@
+#1.- Este elemento se utiliza como base para la colocación de los demás elementos que integrarán la GUI como un todo;
+#2.- Evita que los elementos parezcan que flotan o que fueron agregados sin formar parte de la Ventana;
+
+
+
+

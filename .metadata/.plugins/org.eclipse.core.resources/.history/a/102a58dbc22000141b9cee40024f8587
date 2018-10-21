@@ -1,0 +1,1200 @@
+package ModuloBase;
+
+import javax.swing.*;
+
+import java.awt.*;
+import java.util.*;
+import java.io.*;
+
+import Interfaz.VentanaPrincipal;
+import ModuloWizard.*;
+import SwingWidget.*;
+import ModuloScript.*;
+import ModuloPrototipo.*;
+import ModuloPlantilla.*;
+import SoporteAyuda.*;
+
+@SuppressWarnings({"serial","rawtypes"})
+public class FuncionBase implements java.io.Serializable
+{
+	//almacenadores de objetos
+	public Vector 	vector_ranuras 	= new Vector();
+	public Vector	vector_entrada	= new Vector();
+	public Vector 	vector_salida	= new Vector();
+	
+	//seleccionado
+	public JComponent widget_actual;
+	public JComponent widget_capturado;
+	public JComponent widget_clonado;
+	public int posicion_actual=0;
+
+	//creo que no se usan??
+	int posicion_ranura;
+	int posicion_widget;
+	int posicion_contenedor;
+
+	//=??
+	Font fuente_general;
+	Font fuente_especial;
+
+	//donde se presiono por ultima ves el mouse
+	int click_x;
+	int click_y;
+
+	//el enlace a su interfaz grafica
+	public VentanaPrincipal ventana_base;
+
+	//instanciadores de los modulos
+	VentanaTrainer trainer_actual;
+	VentanaPrototipo ventana_prototipo;
+	FuncionPlantilla funcion_plantilla=null;
+
+	//indicadores para las modalidades
+	public int modalidad=0;
+	public int consejero=0;
+
+	public SPopupMenu SPmenu;
+
+	//constructor de la base funcional
+	public FuncionBase(VentanaPrincipal ventanaPrincipal)
+	{
+		SPmenu = new SPopupMenu(this);
+		ventana_base = ventanaPrincipal;
+	}
+
+	//nueva ranura para la edicion
+	@SuppressWarnings("unchecked")
+	public void nuevoEntorno()
+	{
+	    Ranura ranura_centro = new Ranura(this);
+	    ranura_centro.setPosicionranura(vector_ranuras.size());
+	    ventana_base.carga_ranuras.addTab("Ranura_"+ventana_base.carga_ranuras.getTabCount(), null,ranura_centro.scrolgrilla, "Ranura_"+ventana_base.carga_ranuras.getTabCount());
+	    ventana_base.carga_ranuras.setTabComponentAt(ventana_base.carga_ranuras.getTabCount()-1, ranura_centro.rotulo_ranura);
+	    VentanaInterna internal = new VentanaInterna(this);
+	    internal.setTitle("Ventana");
+	    internal.setResizable(true);
+	    internal.setClosable(false);
+	    internal.setMaximizable(true);
+	    internal.setIconifiable(true);
+	    internal.setLayout(null);
+	    internal.setNombre("Ventana");
+	    internal.setVisible(true);
+	    ranura_centro.panel_dibujo.add(internal, new Integer(1));
+	    internal.setPosicionranura(vector_ranuras.size());
+	    ranura_centro.vector_widgets.add(internal);
+	    vector_ranuras.add(ranura_centro);
+	}
+
+	//guardar entorno
+	public void guardarEntorno()
+	{
+	    JFileChooser file1 = new JFileChooser();
+	    FiltroBase ent = new FiltroBase(new String("ent"), "Entorno de Edicion");
+	    file1.addChoosableFileFilter(ent);
+	    int seleccion = file1.showSaveDialog(null);
+	    
+	    if (seleccion == JFileChooser.APPROVE_OPTION)
+	    {
+	        String path = file1.getSelectedFile().toString();
+	
+	        
+	        File factual=new File(path);
+	        if(factual.exists())
+	        {
+	           int confirmexiste= JOptionPane.showConfirmDialog(null, "El archivo ya existe..Desea Reemplazarlo?");
+	           if(confirmexiste==0)
+	           {
+	               factual.delete();
+	    
+	               String stb=path;
+	               StringBuffer sb=new StringBuffer();
+	               char auxb;
+	               for(int b=0;b<stb.length();b++)
+	               {
+	                   auxb=stb.charAt(b);
+	                   if(auxb=='.')
+	                   {
+	                       break;
+	                    }
+	                    else
+	                    {
+	                        sb.append(auxb);
+	
+	                    }
+	                }                       
+	               
+	               Guardar(""+sb);
+	           }
+	        }
+	        else
+	        {
+	            Guardar(path);
+	        }
+	
+	    }
+	    else if(seleccion == JFileChooser.CANCEL_OPTION)
+	    {
+	    	JOptionPane.showMessageDialog(null, "Se cancelo la operacion.");        	
+	    }
+	}
+	
+	//serializar entorno 
+	void Guardar (String p)
+	{
+	    try  
+	    {
+	        ObjectOutputStream salida=new ObjectOutputStream(new FileOutputStream(p+".ent"));
+	        vector_salida=vector_ranuras;
+	        salida.writeObject(vector_salida);
+	
+	        salida.close();
+	        JOptionPane.showMessageDialog(null, "Entorno Serializado con exito");        
+	    }
+	    catch (IOException ex) 
+	    {
+	         JOptionPane.showMessageDialog(null, "La serializacion fallo por el siguiente detalle: \n"+ex, "ADVERTENCIA: Falla en la serializacion", JOptionPane.WARNING_MESSAGE);	        
+	    }
+	}
+
+//recuperar serializacion entorno
+public void recuperarEntorno()
+{
+    JFileChooser file1=new JFileChooser();
+    FiltroBase pla = new FiltroBase(new String("pla"), "Plantilla Estandarizada");        
+    FiltroBase ent = new FiltroBase(new String("ent"), "Entorno de Edicion");
+    file1.addChoosableFileFilter(pla);            
+    file1.addChoosableFileFilter(ent);        
+    int seleccion= file1.showOpenDialog(null);
+    if (seleccion == JFileChooser.APPROVE_OPTION)
+    {
+        File chosen = file1.getSelectedFile();
+        if(chosen.getName().endsWith(".ent"))
+        {
+            String nombre=file1.getSelectedFile().getPath();
+            Abrir(nombre);
+            JOptionPane.showMessageDialog(null, "Entorno recuperado con exito"); 
+        }
+    }
+    else if(seleccion == JFileChooser.CANCEL_OPTION)
+    {
+
+    }     
+    
+    	ventana_base.color_selector.slider_r.setEnabled(true);
+	    ventana_base.color_selector.slider_g.setEnabled(true);
+	    ventana_base.color_selector.slider_b.setEnabled(true);
+	    
+	    ventana_base.color_selector_texto.slider_r.setEnabled(true);
+	    ventana_base.color_selector_texto.slider_g.setEnabled(true);
+	    ventana_base.color_selector_texto.slider_b.setEnabled(true);   
+	    
+	    ventana_base.fuente_texto.slider_puntos.setEnabled(true);    
+    
+	}
+
+//reconstruir entorno  
+void cargarVector()
+{
+    for(int a=0;a<vector_entrada.size();a++)
+    {
+        if(vector_entrada.elementAt(a)!=null)
+        {
+        Ranura ranura_previa = (Ranura)vector_entrada.elementAt(a);
+        Ranura ranura_centro = new Ranura(this);
+        ranura_centro.vector_temporal=ranura_previa.vector_widgets;
+        ranura_centro.setPosicionranura(vector_ranuras.size());
+//         ranura_centro.vector_temporal=ranura_previa.vector_widgets; 
+        ventana_base.carga_ranuras.addTab("Ranura", null,ranura_centro.scrolgrilla, "Ranura");
+        ventana_base.carga_ranuras.setTabComponentAt(ventana_base.carga_ranuras.getTabCount()-1, ranura_centro.rotulo_ranura);    
+        ranura_centro.reconstruirEntorno();
+        vector_ranuras.add(ranura_centro);
+    }
+    }
+}
+    
+//agregar widget
+public void agregarWidget()
+{
+    AgregarWidget agregar_widget=new AgregarWidget(this);
+}
+
+//guardar plantilla
+public void guardarPlantilla()
+{
+    funcion_plantilla= new FuncionPlantilla(this);
+    funcion_plantilla.guardarPlantilla();
+}
+
+//recuperar plantilla
+public void recuperarPlantilla()
+{
+    funcion_plantilla=new FuncionPlantilla(this);
+    funcion_plantilla.recuperarPlantilla();
+    
+    ventana_base.color_selector.slider_r.setEnabled(true);
+    ventana_base.color_selector.slider_g.setEnabled(true);
+    ventana_base.color_selector.slider_b.setEnabled(true);
+    
+    ventana_base.color_selector_texto.slider_r.setEnabled(true);
+    ventana_base.color_selector_texto.slider_g.setEnabled(true);
+    ventana_base.color_selector_texto.slider_b.setEnabled(true);   
+    
+    ventana_base.fuente_texto.slider_puntos.setEnabled(true);   
+    
+    
+}
+
+//insertar plantilla
+public void insertarPlantilla()
+{
+VentanaPlantilla ventana_plantilla = new VentanaPlantilla(this);
+}
+
+//insertar serializacion plantilla
+void Abrir (String dir)
+{
+    try  
+    {
+        ObjectInputStream entrada=new ObjectInputStream(new FileInputStream(dir));
+        vector_entrada=(Vector)entrada.readObject();     
+
+        entrada.close();
+        cargarVector();
+    }
+    catch (IOException ex) 
+    {
+
+    }
+    catch (ClassNotFoundException ex) 
+    {
+
+    }
+}
+
+//enviar entorno a script
+public void exportarScript()
+{
+    FuncionScript funcion_script=new FuncionScript();
+    
+    if(vector_ranuras.size()>0)
+    {
+        Ranura ranura_selecta=(Ranura)vector_ranuras.elementAt(posicion_actual);
+
+        funcion_script.setRanura((Ranura)vector_ranuras.elementAt(posicion_ranura));  
+    }
+    else
+    {
+       JOptionPane jopnoselecto=new JOptionPane();
+       StringBuffer jop_buffer=new StringBuffer();
+       jop_buffer.append("Se requiere la seleccion de una ranura \n");
+       jop_buffer.append("para la generacion del script. \n");       
+       jop_buffer.append("Verifique la seleccion y vuelva a intentar. \n");             
+       jopnoselecto.showMessageDialog(null,jop_buffer,"ADVERTENCIA: Seleccion invalida",javax.swing.JOptionPane.WARNING_MESSAGE); 
+       jop_buffer=new StringBuffer();
+    }
+}    
+    
+//iniciar modulo wizard
+public void iniciarWizard()
+{
+        Wizard w= new Wizard();
+        Point ploc=ventana_base.getLocation();
+        int plocx=(int)ploc.getX();
+        int plocy=(int)ploc.getY();                
+        w.setLocation(plocx+50,plocy+50);
+}
+
+//iniciar modulo trainer
+public void iniciarTrainer()
+{
+        trainer_actual=new VentanaTrainer();
+        Point ploc=ventana_base.getLocation();
+        int plocx=(int)ploc.getX();
+        int plocy=(int)ploc.getY();                
+        trainer_actual.setLocation(plocx+ventana_base.panel_propiedad.getWidth(),plocy+50);
+}
+
+//iniciar modulo prototipo
+public void iniciarPrototipo()
+{
+        ventana_prototipo=new VentanaPrototipo();
+        ventana_prototipo.setFuncionBase(this);
+}
+
+//iniciar modalidad eventos
+public void iniciarEventos()
+{
+    modalidad=1;
+
+    ventana_base.panel_eventos.textfield_destino.setEnabled(false);
+    ventana_base.panel_eventos.boton_estado.setText("Activo");
+    ventana_base.panel_eventos.boton_estado.setForeground(Color.green);     
+ 
+}
+
+//detener modalidad eventos
+public void detenerEventos()
+{
+    modalidad=0;
+
+    
+    ventana_base.panel_eventos.textfield_destino.setEnabled(true);
+    ventana_base.panel_eventos.boton_estado.setText("Inactivo");
+    ventana_base.panel_eventos.boton_estado.setForeground(Color.red);      
+}
+
+//iniciar ayuda
+public void iniciarAyuda()
+{
+    VentanaAyuda ventana_ayuda = new VentanaAyuda();
+    ventana_ayuda.setVisible( true);        
+}
+
+//fijar coordenadas del click 
+public void setClickx(int v)    
+{
+click_x=v;
+}
+public void setClicky(int v)    
+{
+click_y=v;
+}
+
+//obtener coordenadas del click
+public int getClickx()    
+{
+return click_x;
+}
+public int getClicky()    
+{
+return click_y;
+}
+
+//remover widget
+public void removerSelecto()
+{
+  
+    Ranura ranura_selecta=(Ranura)vector_ranuras.elementAt(posicion_actual);  
+    JComponent widget_clickeado=widget_actual;
+
+    Vector vector_contenido=new Vector();
+    
+    //en caso de que se clickee un contenedor
+    if(widget_clickeado.getClass().getName().equals("SwingWidget.VentanaInterna"))
+    {
+        VentanaInterna contenedor_actual=(VentanaInterna)widget_clickeado;                
+        vector_contenido=contenedor_actual.vector_widgets;
+    }
+    if(widget_clickeado.getClass().getName().equals("SwingWidget.Plantilla"))
+    {
+        Plantilla contenedor_actual=(Plantilla)widget_clickeado;                
+        vector_contenido=contenedor_actual.vector_widgets;
+    }
+    if(widget_clickeado.getClass().getName().equals("SwingWidget.SPanel"))
+    {
+        SPanel contenedor_actual=(SPanel)widget_clickeado;                
+        vector_contenido=contenedor_actual.vector_widgets;
+    }  
+    
+    //si tiene contenido lo mismo que !=null
+    if(vector_contenido.size()>0)
+    {
+       StringBuffer buffer_mensaje=new StringBuffer();            
+       JOptionPane jopcontenido=new JOptionPane();
+       buffer_mensaje.append("El widget selecto = "+widget_clickeado.getClass().getName()+"\n");
+       buffer_mensaje.append("aun contiene los siguientes elementos\n");       
+       //para llenar el buffer de mensajes
+       for(int a=0;a<vector_contenido.size();a++)
+       {
+           JComponent componente=(JComponent)vector_contenido.elementAt(a);
+           buffer_mensaje.append(""+a+".-"+componente.getClass().getName()+"\n");
+       }
+       buffer_mensaje.append("Desea removerlo de todos modos?");
+       
+       //solicitar confirmacion aceptada o cancelada
+       int confirmexiste= jopcontenido.showConfirmDialog(null,buffer_mensaje);       
+       //si se acepta la confirmacion
+       if(confirmexiste==0)
+        {
+            VentanaInterna vent0=(VentanaInterna)ranura_selecta.vector_widgets.elementAt(0);
+            //primero remueve el contenido
+            for(int b=0;b<vector_contenido.size();b++)
+            {
+               JComponent contenido_actual=(JComponent)vector_contenido.elementAt(b);
+               vent0.buscarWidget(contenido_actual);
+            }
+            //luego remueve el selecto
+            vent0.buscarWidget(widget_clickeado);
+        }         
+       //limpiar el buffer de mensajes 
+       buffer_mensaje=new StringBuffer();
+    }
+    //si es un solo widget
+    else
+    {
+       JOptionPane jopcontinuar=new JOptionPane();
+       int confirmcontinuar= jopcontinuar.showConfirmDialog(null,"Esta seguro que desea remover el Widget = "+widget_clickeado.getClass().getName()+"?"); 
+       if(confirmcontinuar==0)
+       {   
+           VentanaInterna vent=(VentanaInterna)ranura_selecta.vector_widgets.elementAt(0);
+           vent.buscarWidget(widget_clickeado);
+       }       
+    }
+    //buscarWidget localiza el widget enviado entre todos loc contenedores y lo remueve donde se encuentre
+}
+
+//terminar y cerrar aplicacion
+public void salir()
+{
+    verificarCerrado();
+}
+
+/////////////revisar
+public void setPosicionranura(int v)
+{
+posicion_ranura=v;
+}    
+public void setPosicionwidget(int v)
+{
+posicion_widget=v;
+}  
+public void setPosicioncontenedor(int v)
+{
+posicion_contenedor=v;
+}
+
+public int getPosicionranura()
+{
+return posicion_ranura;
+}    
+public int getPosicionwidget()
+{
+return posicion_widget;
+}  
+public int getPosicioncontenedor()
+{
+return posicion_contenedor;
+}
+
+//solicitar confirmacion de cerrado
+public void verificarCerrado()
+{
+    if(vector_ranuras.size()<1)
+    {
+        ventana_base.dispose();
+    }
+    else
+    {
+        int confirmexiste= JOptionPane.showConfirmDialog(null, "Guardar los cambios en el entorno actual antes de salir?");
+        if(confirmexiste==0)
+        {
+            guardarEntorno();
+        }
+        if(confirmexiste==1)
+        {
+        	ventana_base.dispose();                  
+        }
+        
+    }
+}
+public void copiarWidget()
+{
+
+    JFileChooser file1 = new JFileChooser();
+
+    {
+        String path = "Soporte/copy";
+
+        
+        File factual=new File(path);
+        if(factual.exists())
+        {
+           JOptionPane jopexiste=new JOptionPane();
+           {
+               factual.delete();
+
+               String stb=path;
+               StringBuffer sb=new StringBuffer();
+               char auxb;
+               for(int b=0;b<stb.length();b++)
+               {
+
+                   auxb=stb.charAt(b);
+                   if(auxb=='.')
+                   {
+                       break;
+                    }
+                    else
+                    {
+                        sb.append(auxb);
+
+                    }
+                }                       
+               
+               guardarCopiado(""+sb);
+           }
+           
+        }
+        else
+        {
+            guardarCopiado(path);
+        }
+
+
+    SPmenu.menuitem_pegarwidget.setEnabled(true);
+}
+
+}
+
+void guardarCopiado (String p)
+{
+
+
+    try  {
+        
+        widget_clonado=(JComponent)widget_actual;
+
+        ObjectOutputStream salida=new ObjectOutputStream(new FileOutputStream(p+".cop"));
+       
+        salida.writeObject(widget_clonado);
+
+      
+        salida.close();
+        
+
+    }catch (IOException ex) {
+        JOptionPane jop=new JOptionPane();
+        jop.showMessageDialog(null, "La copia fallo por el siguiente detalle: \n"+ex, "ADVERTENCIA: Falla en la copia", jop.WARNING_MESSAGE);
+     }
+
+
+
+}
+
+public void iniciarPegadoWidget()
+{
+        JFileChooser file1=new JFileChooser();
+       
+
+        {
+
+            {
+
+            String nombre="Soporte/copy.cop";
+            abrirCopia(nombre);
+
+
+        }
+            
+        }
+}
+
+
+
+void abrirCopia (String dir)
+{
+    
+    
+    try  {
+        
+        ObjectInputStream entrada=new ObjectInputStream(new FileInputStream(dir));
+
+        widget_capturado=(JComponent)entrada.readObject();
+        
+       
+
+
+        entrada.close();
+//         cargarPlantilla();
+        pegarWidget();
+        
+    }catch (IOException ex) {
+
+     }catch (ClassNotFoundException ex) {
+
+    }
+
+                                   
+
+} 
+
+
+
+
+
+public void pegarWidget()
+{   
+
+    if(widget_capturado.getClass().getName().endsWith("Plantilla"))
+    {
+   
+    Plantilla widget_copiado=(Plantilla)widget_capturado;
+    Plantilla widget_pegado=new Plantilla(this);
+    
+//             widget_actual.setText(panel_propiedad.textfield_nombre.getText());
+    widget_pegado.setLayout(null);
+    widget_pegado.setVisible(widget_copiado.isVisible());            
+    widget_pegado.setSize(widget_copiado.getWidth(),widget_copiado.getHeight());
+    Point ploc=widget_copiado.getLocation();
+    widget_pegado.setLocation(this.getClickx(),this.getClicky());
+    widget_pegado.setBackground(widget_copiado.getBackground());
+    
+    widget_pegado.setBorder(widget_copiado.getBorder());
+    
+    widget_pegado.vector_temporal=widget_copiado.vector_widgets;                
+    widget_pegado.reconstruirEntorno();
+  
+    if(widget_actual.getClass().getName().endsWith("VentanaInterna"))
+    {
+        VentanaInterna contenedor_actual=(VentanaInterna)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);  
+    }
+    if(widget_actual.getClass().getName().endsWith("Plantilla"))
+    {
+        Plantilla contenedor_actual=(Plantilla)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);               
+    }
+    if(widget_actual.getClass().getName().endsWith("SPanel"))
+    {
+        SPanel contenedor_actual=(SPanel)widget_actual;                
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);   
+    }            
+    
+        widget_pegado.setPosicionranura(posicion_actual); 
+        widget_pegado.vector_temporal=new Vector();        
+ 
+   }
+
+
+    if(widget_capturado.getClass().getName().endsWith("SPanel"))
+    {
+   
+    SPanel widget_copiado=(SPanel)widget_capturado;
+    SPanel widget_pegado=new SPanel(this);
+    
+//             widget_actual.setText(panel_propiedad.textfield_nombre.getText());
+    widget_pegado.setLayout(null);
+    widget_pegado.setVisible(widget_copiado.isVisible());            
+    widget_pegado.setSize(widget_copiado.getWidth(),widget_copiado.getHeight());
+    Point ploc=widget_copiado.getLocation();
+    widget_pegado.setLocation(this.getClickx(),this.getClicky());
+    widget_pegado.setBackground(widget_copiado.getBackground());
+    
+    widget_pegado.setBorder(widget_copiado.getBorder());    
+    
+    widget_pegado.vector_temporal=widget_copiado.vector_widgets;                
+    widget_pegado.reconstruirEntorno();
+    
+    if(widget_actual.getClass().getName().endsWith("VentanaInterna"))
+    {
+        VentanaInterna contenedor_actual=(VentanaInterna)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);  
+    }
+    if(widget_actual.getClass().getName().endsWith("Plantilla"))
+    {
+        Plantilla contenedor_actual=(Plantilla)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);               
+    }
+    if(widget_actual.getClass().getName().endsWith("SPanel"))
+    {
+        SPanel contenedor_actual=(SPanel)widget_actual;                
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);   
+    }            
+    
+        widget_pegado.setPosicionranura(posicion_actual); 
+        widget_pegado.vector_temporal=new Vector();                
+    
+   }
+   
+    if(widget_capturado.getClass().getName().endsWith("SButton"))
+    {
+        
+    SButton widget_copiado=(SButton)widget_capturado;
+    SButton widget_pegado=new SButton(this);
+
+    widget_pegado.setText(widget_copiado.getText());                        
+    widget_pegado.setLayout(null);
+    widget_pegado.setVisible(widget_copiado.isVisible());            
+    widget_pegado.setSize(widget_copiado.getWidth(),widget_copiado.getHeight());
+    Point ploc=widget_copiado.getLocation();
+    widget_pegado.setLocation(this.getClickx(),this.getClicky());
+    widget_pegado.setBackground(widget_copiado.getBackground());
+    
+    widget_pegado.setForeground(widget_copiado.getForeground());    
+    widget_pegado.setFont(widget_copiado.getFont());
+   
+//             widget_pegado.vector_temporal=widget_copiado.vector_widgets;                
+//             widget_pegado.reconstruirEntorno();            
+
+    if(widget_actual.getClass().getName().endsWith("VentanaInterna"))
+    {
+        VentanaInterna contenedor_actual=(VentanaInterna)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);  
+    }
+    if(widget_actual.getClass().getName().endsWith("Plantilla"))
+    {
+        Plantilla contenedor_actual=(Plantilla)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);               
+    }
+    if(widget_actual.getClass().getName().endsWith("SPanel"))
+    {
+        SPanel contenedor_actual=(SPanel)widget_actual;                
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);   
+    }            
+        widget_pegado.setPosicionranura(posicion_actual); 
+        widget_pegado.setOrigen(widget_pegado.getPosicionranura());                
+}           
+
+    if(widget_capturado.getClass().getName().endsWith("SRadioButton"))
+    {
+        
+    SRadioButton widget_copiado=(SRadioButton)widget_capturado;
+    SRadioButton widget_pegado=new SRadioButton(this);
+
+    widget_pegado.setText(widget_copiado.getText());                        
+    widget_pegado.setLayout(null);
+    widget_pegado.setVisible(widget_copiado.isVisible());            
+    widget_pegado.setSize(widget_copiado.getWidth(),widget_copiado.getHeight());
+    Point ploc=widget_copiado.getLocation();
+    widget_pegado.setLocation(this.getClickx(),this.getClicky());
+    widget_pegado.setBackground(widget_copiado.getBackground());
+    
+    widget_pegado.setBorder(widget_copiado.getBorder());    
+    
+    widget_pegado.setForeground(widget_copiado.getForeground());    
+    widget_pegado.setFont(widget_copiado.getFont());    
+   
+//             widget_pegado.vector_temporal=widget_copiado.vector_widgets;                
+//             widget_pegado.reconstruirEntorno();            
+
+    if(widget_actual.getClass().getName().endsWith("VentanaInterna"))
+    {
+        VentanaInterna contenedor_actual=(VentanaInterna)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);  
+    }
+    if(widget_actual.getClass().getName().endsWith("Plantilla"))
+    {
+        Plantilla contenedor_actual=(Plantilla)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);               
+    }
+    if(widget_actual.getClass().getName().endsWith("SPanel"))
+    {
+        SPanel contenedor_actual=(SPanel)widget_actual;                
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);   
+    }                     
+        widget_pegado.setPosicionranura(posicion_actual);
+    }                   
+
+    if(widget_capturado.getClass().getName().endsWith("SCheckBox"))
+    {
+        
+    SCheckBox widget_copiado=(SCheckBox)widget_capturado;
+    SCheckBox widget_pegado=new SCheckBox(this);
+
+    widget_pegado.setText(widget_copiado.getText());                        
+    widget_pegado.setLayout(null);
+    widget_pegado.setVisible(widget_copiado.isVisible());            
+    widget_pegado.setSize(widget_copiado.getWidth(),widget_copiado.getHeight());
+    Point ploc=widget_copiado.getLocation();
+    widget_pegado.setLocation(this.getClickx(),this.getClicky());
+    widget_pegado.setBackground(widget_copiado.getBackground());
+    
+    widget_pegado.setForeground(widget_copiado.getForeground());    
+    widget_pegado.setFont(widget_copiado.getFont());    
+   
+//             widget_pegado.vector_temporal=widget_copiado.vector_widgets;                
+//             widget_pegado.reconstruirEntorno();            
+
+    if(widget_actual.getClass().getName().endsWith("VentanaInterna"))
+    {
+        VentanaInterna contenedor_actual=(VentanaInterna)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);  
+    }
+    if(widget_actual.getClass().getName().endsWith("Plantilla"))
+    {
+        Plantilla contenedor_actual=(Plantilla)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);               
+    }
+    if(widget_actual.getClass().getName().endsWith("SPanel"))
+    {
+        SPanel contenedor_actual=(SPanel)widget_actual;                
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);   
+    }       
+        widget_pegado.setPosicionranura(posicion_actual);            
+    }        
+
+    if(widget_capturado.getClass().getName().endsWith("STextField"))
+    {
+        
+    STextField widget_copiado=(STextField)widget_capturado;
+    STextField widget_pegado=new STextField(this);
+
+    widget_pegado.setText(widget_copiado.getText());                        
+    widget_pegado.setLayout(null);
+    widget_pegado.setVisible(widget_copiado.isVisible());            
+    widget_pegado.setSize(widget_copiado.getWidth(),widget_copiado.getHeight());
+    Point ploc=widget_copiado.getLocation();
+    widget_pegado.setLocation(this.getClickx(),this.getClicky());
+    widget_pegado.setBackground(widget_copiado.getBackground());
+    
+    widget_pegado.setForeground(widget_copiado.getForeground());    
+    widget_pegado.setFont(widget_copiado.getFont());    
+   
+//             widget_pegado.vector_temporal=widget_copiado.vector_widgets;                
+//             widget_pegado.reconstruirEntorno();            
+
+    if(widget_actual.getClass().getName().endsWith("VentanaInterna"))
+    {
+        VentanaInterna contenedor_actual=(VentanaInterna)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);  
+    }
+    if(widget_actual.getClass().getName().endsWith("Plantilla"))
+    {
+        Plantilla contenedor_actual=(Plantilla)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);               
+    }
+    if(widget_actual.getClass().getName().endsWith("SPanel"))
+    {
+        SPanel contenedor_actual=(SPanel)widget_actual;                
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);   
+    } 
+        widget_pegado.setPosicionranura(posicion_actual);            
+    }        
+
+    if(widget_capturado.getClass().getName().endsWith("SPasswordField"))
+    {
+        
+    SPasswordField widget_copiado=(SPasswordField)widget_capturado;
+    SPasswordField widget_pegado=new SPasswordField(this);
+
+    widget_pegado.setText(widget_copiado.getText());                        
+    widget_pegado.setLayout(null);
+    widget_pegado.setVisible(widget_copiado.isVisible());            
+    widget_pegado.setSize(widget_copiado.getWidth(),widget_copiado.getHeight());
+    Point ploc=widget_copiado.getLocation();
+    widget_pegado.setLocation(this.getClickx(),this.getClicky());
+    widget_pegado.setBackground(widget_copiado.getBackground());
+    
+    widget_pegado.setForeground(widget_copiado.getForeground());    
+    widget_pegado.setFont(widget_copiado.getFont());    
+   
+//             widget_pegado.vector_temporal=widget_copiado.vector_widgets;                
+//             widget_pegado.reconstruirEntorno();            
+
+    if(widget_actual.getClass().getName().endsWith("VentanaInterna"))
+    {
+        VentanaInterna contenedor_actual=(VentanaInterna)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);  
+    }
+    if(widget_actual.getClass().getName().endsWith("Plantilla"))
+    {
+        Plantilla contenedor_actual=(Plantilla)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);               
+    }
+    if(widget_actual.getClass().getName().endsWith("SPanel"))
+    {
+        SPanel contenedor_actual=(SPanel)widget_actual;                
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);   
+    }   
+        widget_pegado.setPosicionranura(posicion_actual);            
+    }            
+
+    if(widget_capturado.getClass().getName().endsWith("STextArea"))
+    {
+        
+    STextArea widget_copiado=(STextArea)widget_capturado;
+    STextArea widget_pegado=new STextArea(this);
+
+    widget_pegado.setText(widget_copiado.getText());                        
+    widget_pegado.setLayout(null);
+    widget_pegado.setVisible(widget_copiado.isVisible());            
+    widget_pegado.setSize(widget_copiado.getWidth(),widget_copiado.getHeight());
+    Point ploc=widget_copiado.getLocation();
+    widget_pegado.setLocation(this.getClickx(),this.getClicky());
+    widget_pegado.setBackground(widget_copiado.getBackground());
+    
+    widget_pegado.setForeground(widget_copiado.getForeground());    
+    widget_pegado.setFont(widget_copiado.getFont());    
+   
+//             widget_pegado.vector_temporal=widget_copiado.vector_widgets;                
+//             widget_pegado.reconstruirEntorno();            
+
+    if(widget_actual.getClass().getName().endsWith("VentanaInterna"))
+    {
+        VentanaInterna contenedor_actual=(VentanaInterna)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);  
+    }
+    if(widget_actual.getClass().getName().endsWith("Plantilla"))
+    {
+        Plantilla contenedor_actual=(Plantilla)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);               
+    }
+    if(widget_actual.getClass().getName().endsWith("SPanel"))
+    {
+        SPanel contenedor_actual=(SPanel)widget_actual;                
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);   
+    }    
+        widget_pegado.setPosicionranura(posicion_actual);            
+    }
+
+    if(widget_capturado.getClass().getName().endsWith("SList"))
+    {
+        
+    SList widget_copiado=(SList)widget_capturado;
+    SList widget_pegado=new SList(this);                
+
+    widget_pegado.setVector(widget_copiado.getVector());
+
+//             widget_pegado.setText(widget_copiado.getText());
+//             widget_pegado.setLayout(null);
+    widget_pegado.setVisible(widget_copiado.isVisible());            
+    widget_pegado.setSize(widget_copiado.getWidth(),widget_copiado.getHeight());
+    Point ploc=widget_copiado.getLocation();
+    widget_pegado.setLocation(this.getClickx(),this.getClicky());
+    widget_pegado.setBackground(widget_copiado.getBackground());
+    
+    widget_pegado.setForeground(widget_copiado.getForeground());    
+    widget_pegado.setFont(widget_copiado.getFont());    
+    
+//             widget_pegado.vector_temporal=widget_copiado.vector_widgets;                
+//             widget_pegado.reconstruirEntorno();            
+
+    if(widget_actual.getClass().getName().endsWith("VentanaInterna"))
+    {
+        VentanaInterna contenedor_actual=(VentanaInterna)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);  
+    }
+    if(widget_actual.getClass().getName().endsWith("Plantilla"))
+    {
+        Plantilla contenedor_actual=(Plantilla)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);               
+    }
+    if(widget_actual.getClass().getName().endsWith("SPanel"))
+    {
+        SPanel contenedor_actual=(SPanel)widget_actual;                
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);   
+    }      
+        widget_pegado.setPosicionranura(posicion_actual);            
+    } 
+
+    if(widget_capturado.getClass().getName().endsWith("SComboBox"))
+    {
+
+    SComboBox widget_copiado=(SComboBox)widget_capturado;
+    SComboBox widget_pegado=new SComboBox(this);     
+    
+    widget_pegado.setVector(widget_copiado.getVector());
+        
+//             widget_pegado.setText(widget_copiado.getText());
+//             widget_pegado.setLayout(null);
+    widget_pegado.setVisible(widget_copiado.isVisible());            
+    widget_pegado.setSize(widget_copiado.getWidth(),widget_copiado.getHeight());
+    Point ploc=widget_copiado.getLocation();
+    widget_pegado.setLocation(this.getClickx(),this.getClicky());
+    widget_pegado.setBackground(widget_copiado.getBackground());
+    
+    widget_pegado.setForeground(widget_copiado.getForeground());    
+    widget_pegado.setFont(widget_copiado.getFont());
+    
+//             widget_pegado.vector_temporal=widget_copiado.vector_widgets;                
+//             widget_pegado.reconstruirEntorno();            
+
+    if(widget_actual.getClass().getName().endsWith("VentanaInterna"))
+    {
+        VentanaInterna contenedor_actual=(VentanaInterna)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);  
+    }
+    if(widget_actual.getClass().getName().endsWith("Plantilla"))
+    {
+        Plantilla contenedor_actual=(Plantilla)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);               
+    }
+    if(widget_actual.getClass().getName().endsWith("SPanel"))
+    {
+        SPanel contenedor_actual=(SPanel)widget_actual;                
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);   
+    }      
+        widget_pegado.setPosicionranura(posicion_actual);            
+    } 
+
+    if(widget_capturado.getClass().getName().endsWith("SSlider"))
+    {
+
+    SSlider widget_copiado=(SSlider)widget_capturado;
+    SSlider widget_pegado=new SSlider(this);  
+    
+//             widget_pegado.setText(widget_copiado.getText());
+    widget_pegado.setLayout(null);
+    widget_pegado.setVisible(widget_copiado.isVisible());            
+    widget_pegado.setSize(widget_copiado.getWidth(),widget_copiado.getHeight());
+    Point ploc=widget_copiado.getLocation();
+    widget_pegado.setLocation(this.getClickx(),this.getClicky());
+    widget_pegado.setBackground(widget_copiado.getBackground());
+    
+    if(widget_actual.getClass().getName().endsWith("VentanaInterna"))
+    {
+        VentanaInterna contenedor_actual=(VentanaInterna)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);  
+    }
+    if(widget_actual.getClass().getName().endsWith("Plantilla"))
+    {
+        Plantilla contenedor_actual=(Plantilla)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);               
+    }
+    if(widget_actual.getClass().getName().endsWith("SPanel"))
+    {
+        SPanel contenedor_actual=(SPanel)widget_actual;                
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);   
+    }      
+        widget_pegado.setPosicionranura(posicion_actual);                             
+    }  
+
+    if(widget_capturado.getClass().getName().endsWith("SLabel"))
+    {
+    
+    SLabel widget_copiado=(SLabel)widget_capturado;
+    SLabel widget_pegado=new SLabel(this);
+    
+    widget_pegado.setText(widget_copiado.getText());
+    widget_pegado.setLayout(null);
+    widget_pegado.setVisible(widget_copiado.isVisible());            
+    widget_pegado.setSize(widget_copiado.getWidth(),widget_copiado.getHeight());
+    Point ploc=widget_copiado.getLocation();
+    widget_pegado.setLocation(this.getClickx(),this.getClicky());
+    widget_pegado.setBackground(widget_copiado.getBackground());
+    
+    widget_pegado.setForeground(widget_copiado.getForeground());    
+    widget_pegado.setFont(widget_copiado.getFont());    
+    
+    if(widget_actual.getClass().getName().endsWith("VentanaInterna"))
+    {
+        VentanaInterna contenedor_actual=(VentanaInterna)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);  
+    }
+    if(widget_actual.getClass().getName().endsWith("Plantilla"))
+    {
+        Plantilla contenedor_actual=(Plantilla)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);               
+    }
+    if(widget_actual.getClass().getName().endsWith("SPanel"))
+    {
+        SPanel contenedor_actual=(SPanel)widget_actual;                
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);   
+    }      
+        widget_pegado.setPosicionranura(posicion_actual);            
+    }       
+
+    if(widget_capturado.getClass().getName().endsWith("SProgressBar"))
+    {
+    
+    SProgressBar widget_copiado=(SProgressBar)widget_capturado;
+    SProgressBar widget_pegado=new SProgressBar(this);
+    
+//             widget_pegado.setText(widget_copiado.getText());
+    widget_pegado.setLayout(null);
+    widget_pegado.setVisible(widget_copiado.isVisible());            
+    widget_pegado.setSize(widget_copiado.getWidth(),widget_copiado.getHeight());
+    Point ploc=widget_copiado.getLocation();
+    widget_pegado.setLocation(this.getClickx(),this.getClicky());
+    widget_pegado.setBackground(widget_copiado.getBackground());
+    
+    if(widget_actual.getClass().getName().endsWith("VentanaInterna"))
+    {
+        VentanaInterna contenedor_actual=(VentanaInterna)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);  
+    }
+    if(widget_actual.getClass().getName().endsWith("Plantilla"))
+    {
+        Plantilla contenedor_actual=(Plantilla)widget_actual;    
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);               
+    }
+    if(widget_actual.getClass().getName().endsWith("SPanel"))
+    {
+        SPanel contenedor_actual=(SPanel)widget_actual;                
+
+        contenedor_actual.add(widget_pegado);
+        contenedor_actual.vector_widgets.add(widget_pegado);   
+    }      
+        widget_pegado.setPosicionranura(posicion_actual);            
+
+    }        
+ ventana_base.setSize(ventana_base.getWidth()+1,ventana_base.getHeight()+1);           
+            
+}
+}

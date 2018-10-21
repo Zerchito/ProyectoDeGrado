@@ -1,0 +1,4 @@
+#1.- Debe adaptarse al usuario y no lo inverso, tampoco adaptarse al desarrollador;
+#2.- Debe usar términos familiares para el usuario, relacionados con el entorno de trabajo del usuario;
+#3.- Información no relevante para el usuario debe manipularse en forma oculta;
+

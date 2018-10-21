@@ -1,0 +1,4 @@
+#1.- Navegación de alto nivel.- Para aplicaciones que cuentan con varias pantallas funcionales, utilizando menús para navegar directamente entre funciones.;
+#2.- Pila de cartas.- Para aplicaciones caracterizadas por funciones secuenciales, utilizando las pantallas apiladas como elemento de acceso a las funciones.;
+#3.- Tabla de ordenación.- Para aplicaciones que usan registros tabulares, brindando funciones que modifican los datos y exhibición en los registros.;
+#4.- Migas de Pan.- Para aplicaciones que cuentan con una jerarquía de pantallas de despliegue, permite la modificación directa.;

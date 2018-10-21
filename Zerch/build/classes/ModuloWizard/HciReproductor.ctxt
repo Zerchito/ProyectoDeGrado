@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.target=HciReproductor()
+comment1.params=ae
+comment1.target=void\ actionPerformed(ActionEvent)
+comment2.params=v
+comment2.target=void\ cargarReferencias(Vector)
+comment3.params=pos
+comment3.target=void\ reproducirReferencia(int)
+comment4.params=vt
+comment4.target=void\ setVentanatrainer(VentanaTrainer)
+comment5.target=void\ cerrarEsto()
+numComments=6

@@ -1,0 +1,5 @@
+#1.- Una representación que si bien no es exacta, debe tener un alto grado de semejanza al objeto del mundo real que representa.;
+#2.- Debe poseer consistencia y coherencia a lo largo de toda la aplicación.;
+#3.- Debe tener un caracter auto explicativo que no requiera brindar instrucciones continuamente.;
+#4.- Debe ser Transparente para informar de consecuencias y acciones al usuario.;
+#5.- Debe manipular datos precisos para no brindar información innecesaria.;

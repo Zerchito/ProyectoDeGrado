@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.target=PanelDimension()
+comment1.params=ae
+comment1.target=void\ actionPerformed(ActionEvent)
+comment2.params=s
+comment2.target=String\ traducirAncho(String)
+comment3.params=s
+comment3.target=String\ traducirAlto(String)
+comment4.params=s\ v
+comment4.target=StringBuffer\ altoPartedos(String,\ int)
+comment5.target=void\ actualizar()
+numComments=6

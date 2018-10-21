@@ -1,0 +1,388 @@
+package ModuloBase;
+
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import java.util.*;
+import javax.swing.border.*;
+import InterfazBase.*;
+import SwingWidget.*;
+
+@SuppressWarnings({"serial","rawtypes","unchecked"})
+public class AgregarWidget extends JFrame implements ActionListener
+{
+	//componentes de la interfaz grafica
+	JPanel panel_centro;
+	public JLabel label_arbol;
+	public JLabel label_vista_previa;
+	
+	JPanel panel_arbol;
+	public ArbolSwing arbol_swing;
+	
+	JPanel panel_vista_previa;
+	JPanel panel_previa;
+	PanelPropiedades panel_propiedad;
+	
+	JPanel panel_sud;
+	JPanel panel_opciones;
+	
+	public JButton boton_cancelar;
+	public JButton boton_aceptar;
+	
+	//instancias de los widgets previos a exhibir
+	public JPanel panel_previo;
+	public JButton buton_previo;
+	public JCheckBox checkbox_previo;
+	public JRadioButton radiobutton_previo;
+	public JComboBox combo_previo;
+	public JList list_previo;
+	public JTextField textfield_previo;
+	public JPasswordField passwordfield_previo;
+	public JTextArea textarea_previo;
+	public JSlider slider_previo;
+	public JLabel label_previo;
+	public JProgressBar progressbar_previo;
+	
+	//vector con los widgets en vista previa
+	Vector vector_previos;
+	
+	//enlace a funcion base
+	FuncionBase funcion_base;
+	
+	Point ploc;
+	int plocx;
+	int plocy;
+	
+	//para saber a cual ranura de edicion pertenece el widget clickeado (talves innecesario con recursion actual)
+	Ranura ranura_actual;
+	
+	//el widget sobre el cual se agregara el widget (contenedor=ventana interna, plantilla, panel)
+	JComponent widget_clickeado;
+	
+	//captura el nombre de la hoja selecta en el arbol
+	String string_hoja;
+	Component widget_selecto;
+	
+	
+	public AgregarWidget(FuncionBase v)
+	{
+	    vector_previos=new Vector();
+	    
+	    funcion_base=v;
+	    
+	    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	    setLocation((int)screenSize.getWidth()*2/6,(int)screenSize.getHeight()*1/5);
+	    setSize(520,400);
+	    setLayout(new BorderLayout());
+	    setVisible(true);
+	    setResizable(false);
+	    setTitle("Agregar Widget");
+	    
+	    panel_centro=new JPanel();
+	    panel_centro.setLayout(null);
+	    add("Center",panel_centro);
+	    
+	    label_arbol=new JLabel("Widget:");
+	    label_arbol.setBounds(5,5,50,20);
+	    label_arbol.setBorder(new EtchedBorder());
+	    panel_centro.add(label_arbol);    
+	    
+	    label_vista_previa=new JLabel("Vista Previa:");
+	    label_vista_previa.setBounds(260,5,200,20);
+	    label_vista_previa.setBorder(new EtchedBorder());
+	    panel_centro.add(label_vista_previa);     
+	    
+	    panel_arbol=new JPanel();
+	    panel_arbol.setBounds(5,25,250,290);
+	    panel_arbol.setLayout(null);
+	    panel_arbol.setBackground(Color.white);
+	    panel_arbol.setBorder(new SoftBevelBorder(BevelBorder.LOWERED)) ;
+	    panel_centro.add(panel_arbol);    
+	    
+	    arbol_swing=new ArbolSwing(this);
+	    arbol_swing.setLocation(5,5);
+	    panel_arbol.add(arbol_swing);    
+	    
+	    panel_vista_previa=new JPanel();
+	    panel_vista_previa.setBounds(260,25,250,290);
+	    panel_vista_previa.setLayout(null);
+	    panel_vista_previa.setBackground(Color.white);
+	    panel_vista_previa.setBorder(new SoftBevelBorder(BevelBorder.LOWERED)) ;
+	    panel_centro.add(panel_vista_previa);        
+	
+	    panel_previa=new JPanel();
+	    panel_previa.setBackground(new Color(75,125,230));
+	    panel_previa.setLayout(null);
+	    panel_previa.setBorder(new SoftBevelBorder(BevelBorder.LOWERED)) ;
+	    panel_previa.setBounds(5,5,200,150);
+	    panel_vista_previa.add(panel_previa);
+	    
+	    panel_propiedad=new PanelPropiedades(funcion_base);
+	    panel_propiedad.setLocation(5,160);
+	    panel_propiedad.setSize(200,100);
+	    panel_propiedad.label_borde.setVisible(false);
+	    panel_propiedad.combo_borde.setVisible(false);
+	    panel_vista_previa.add(panel_propiedad);
+	    
+	    panel_propiedad.textfield_posx.setText(""+funcion_base.getClickx());
+	    panel_propiedad.textfield_posy.setText(""+funcion_base.getClicky());     
+	
+	    panel_sud=new JPanel();
+	    panel_sud.setLayout(new BorderLayout());
+	    panel_sud.setBorder(new EtchedBorder());
+	    add("South",panel_sud);
+	    
+	    panel_opciones=new JPanel();
+	    panel_opciones.setLayout(null);
+	    panel_opciones.setPreferredSize(new Dimension(250,30));
+	    panel_opciones.setBorder(new EtchedBorder()) ;
+	    panel_sud.add("East",panel_opciones);
+	    
+	    boton_cancelar=new JButton("Cancelar");
+	    boton_cancelar.setBounds(110,5,100,20);
+	    panel_opciones.add(boton_cancelar);
+	
+	    boton_aceptar=new JButton("Aceptar");
+	    boton_aceptar.setBounds(5,5,100,20);
+	    boton_aceptar.setEnabled(false);
+	    panel_opciones.add(boton_aceptar);       
+	
+	    //las instancias de exhibicion previa
+	    panel_previo=new JPanel();
+	    panel_previo.setBounds(20,20,100,50);
+	    panel_previo.setVisible(false);
+	    panel_previa.add(panel_previo);
+	    vector_previos.add(panel_previo);      
+	
+	    buton_previo=new JButton("SButton");
+	    buton_previo.setBounds(20,20,100,20);
+	    buton_previo.setVisible(false);
+	    panel_previa.add(buton_previo);
+	    vector_previos.add(buton_previo);   
+	    
+	    checkbox_previo=new JCheckBox("SCheckBox");
+	    checkbox_previo.setBounds(20,20,100,20);
+	    checkbox_previo.setVisible(false);
+	    panel_previa.add(checkbox_previo);
+	    vector_previos.add(checkbox_previo);
+	    
+	    radiobutton_previo=new JRadioButton("SRadioButton");
+	    radiobutton_previo.setBounds(20,20,100,20);
+	    radiobutton_previo.setVisible(false);
+	    panel_previa.add(radiobutton_previo);
+	    vector_previos.add(radiobutton_previo);    
+	     
+	    combo_previo=new JComboBox();
+	    combo_previo.addItem("SComboBox.0");
+	    combo_previo.addItem("SComboBox.1");    
+	    combo_previo.setBounds(20,20,100,20);
+	    combo_previo.setVisible(false);
+	    panel_previa.add(combo_previo);
+	    vector_previos.add(combo_previo);    
+	
+	    String []list_string={"SList.0","SList.1"};
+	    list_previo=new JList(list_string);
+	    list_previo.setBounds(20,20,100,50);
+	    list_previo.setVisible(false);
+	    panel_previa.add(list_previo);
+	    vector_previos.add(list_previo);    
+	    
+	    textfield_previo=new JTextField("STextField");
+	    textfield_previo.setBounds(20,20,100,20);
+	    textfield_previo.setVisible(false);
+	    panel_previa.add(textfield_previo);
+	    vector_previos.add(textfield_previo);    
+	  
+	    passwordfield_previo=new JPasswordField("SPasswordField");
+	    passwordfield_previo.setBounds(20,20,100,20);
+	    passwordfield_previo.setVisible(false);
+	    panel_previa.add(passwordfield_previo);
+	    vector_previos.add(passwordfield_previo);      
+	    
+	    textarea_previo=new JTextArea();
+	    textarea_previo.setBounds(20,20,100,50);
+	    textarea_previo.setVisible(false);
+	    panel_previa.add(textarea_previo);
+	    vector_previos.add(textarea_previo);   
+	
+	    slider_previo=new JSlider();
+	    slider_previo.setBounds(20,20,100,20);
+	    slider_previo.setMinimum(8);
+	    slider_previo.setMaximum(100);        
+	    slider_previo.setValue(12);        
+	    slider_previo.setVisible(false);
+	    panel_previa.add(slider_previo);
+	    vector_previos.add(slider_previo);       
+	
+	  
+	    
+	    label_previo=new JLabel("SLabel");
+	    label_previo.setBounds(20,20,100,20);
+	    label_previo.setVisible(false);
+	    panel_previa.add(label_previo);
+	    vector_previos.add(label_previo);      
+	    
+	    progressbar_previo=new JProgressBar();
+	    progressbar_previo.setValue(50);
+	    progressbar_previo.setBounds(20,20,100,20);
+	    progressbar_previo.setVisible(false);
+	    panel_previa.add(progressbar_previo);
+	    vector_previos.add(progressbar_previo);     
+	  
+	    boton_aceptar.addActionListener(this);
+	    boton_cancelar.addActionListener(this);    
+	   
+	    setSize(this.getWidth()+1,this.getHeight());
+    }
+	    
+    public void actionPerformed(ActionEvent ae)
+    {   
+        if(ae.getSource()==boton_cancelar)
+        {
+            this.dispose();
+        }
+        if(ae.getSource()==boton_aceptar)
+        {	           
+            string_hoja=""+arbol_swing.arbol_total.getLastSelectedPathComponent();
+      
+            int location_x=Integer.parseInt(panel_propiedad.textfield_posx.getText().toString());
+            int location_y=Integer.parseInt(panel_propiedad.textfield_posy.getText().toString());                
+            int size_w=Integer.parseInt(panel_propiedad.textfield_size_w.getText().toString());
+        	int size_h=Integer.parseInt(panel_propiedad.textfield_size_h.getText().toString());
+            
+        	widget_clickeado=funcion_base.widget_actual;
+        	int pos =funcion_base.buscarComponente(widget_clickeado);
+            
+            if(string_hoja.endsWith("SPanel"))
+            {
+            	funcion_base.notificarPanel(location_x,location_y,size_w,size_h,pos);     
+            }                
+
+            if(string_hoja.endsWith("SButton"))
+            {
+            	String texto = panel_propiedad.textfield_nombre.getText();
+                funcion_base.notificarButton(location_x,location_y,size_w,size_h,pos,texto);            
+            }
+        
+            if(string_hoja.endsWith("SRadioButton"))
+            {
+            	String texto = panel_propiedad.textfield_nombre.getText();
+                funcion_base.notificarRadioButton(location_x,location_y,size_w,size_h,pos,texto);
+            }
+            
+            if(string_hoja.endsWith("SCheckBox"))
+            {
+            	String texto = panel_propiedad.textfield_nombre.getText();
+                funcion_base.notificarCheckBox(location_x,location_y,size_w,size_h,pos,texto);
+            }        
+        
+            if(string_hoja.endsWith("STextField"))
+            {
+            	String texto = panel_propiedad.textfield_nombre.getText();
+                funcion_base.notificarTextField(location_x,location_y,size_w,size_h,pos,texto);
+            }  
+        
+            if(string_hoja.endsWith("SPasswordField"))
+            {
+            	String texto = panel_propiedad.textfield_nombre.getText();
+                funcion_base.notificarPasswordField(location_x,location_y,size_w,size_h,pos,texto);
+            }        
+        
+            if(string_hoja.endsWith("STextArea"))
+            {
+            	String texto = panel_propiedad.textfield_nombre.getText();
+                funcion_base.notificarTextArea(location_x,location_y,size_w,size_h,pos,texto);
+            }
+            
+            if(string_hoja.endsWith("SList"))
+            {
+            	String texto = panel_propiedad.textfield_nombre.getText();
+                funcion_base.notificarList(location_x,location_y,size_w,size_h,pos,texto);
+            }         
+        
+            if(string_hoja.endsWith("SComboBox"))
+            {
+
+            }     
+
+            if(string_hoja.endsWith("SSlider"))
+            {
+
+            SSlider widget_actual= new SSlider(funcion_base);
+            
+//             widget_actual.setText(panel_propiedad.textfield_nombre.getText());
+            widget_actual.setLayout(null);
+            widget_actual.setVisible(true);            
+            widget_actual.setBounds(location_x,location_y,size_w,size_h);
+            widget_actual.setBackground(new Color(255,255,255));
+            
+            if(widget_clickeado.getClass().getName().endsWith("VentanaInterna"))
+            {
+                VentanaInterna contenedor_actual=(VentanaInterna)widget_clickeado;    
+
+                contenedor_actual.add(widget_actual);
+                contenedor_actual.vector_widgets.add(widget_actual);                
+            }
+            if(widget_clickeado.getClass().getName().endsWith("Plantilla"))
+            {
+                Plantilla contenedor_actual=(Plantilla)widget_clickeado;    
+    
+                contenedor_actual.add(widget_actual);
+                contenedor_actual.vector_widgets.add(widget_actual);               
+            }
+            if(widget_clickeado.getClass().getName().endsWith("SPanel"))
+            {
+                SPanel contenedor_actual=(SPanel)widget_clickeado;                
+
+                contenedor_actual.add(widget_actual);
+                contenedor_actual.vector_widgets.add(widget_actual);                 
+            }
+                widget_actual.setPosicionranura(funcion_base.posicion_actual);                          
+        }         
+        
+            if(string_hoja.endsWith("SLabel"))
+            {
+            	funcion_base.notificarLabel(location_x,location_y,size_w,size_h,pos);
+            }          
+        
+            if(string_hoja.endsWith("SProgressBar"))
+            {
+            
+            SProgressBar widget_actual= new SProgressBar(funcion_base);
+            
+            //widget_actual.setText(panel_propiedad.textfield_nombre.getText());
+            widget_actual.setValue(50);
+            widget_actual.setLayout(null);
+            widget_actual.setVisible(true);            
+            widget_actual.setBounds(location_x,location_y,size_w,size_h);
+            widget_actual.setBackground(new Color(255,255,255));
+            
+            if(widget_clickeado.getClass().getName().endsWith("VentanaInterna"))
+            {
+                VentanaInterna contenedor_actual=(VentanaInterna)widget_clickeado;    
+
+                contenedor_actual.add(widget_actual);
+                contenedor_actual.vector_widgets.add(widget_actual);                
+            }
+            if(widget_clickeado.getClass().getName().endsWith("Plantilla"))
+            {
+                Plantilla contenedor_actual=(Plantilla)widget_clickeado;    
+    
+                contenedor_actual.add(widget_actual);
+                contenedor_actual.vector_widgets.add(widget_actual);               
+            }
+            if(widget_clickeado.getClass().getName().endsWith("SPanel"))
+            {
+                SPanel contenedor_actual=(SPanel)widget_clickeado;                
+
+                contenedor_actual.add(widget_actual);
+                contenedor_actual.vector_widgets.add(widget_actual);                 
+            }
+                widget_actual.setPosicionranura(funcion_base.posicion_actual);                          
+        }          
+    
+            funcion_base.ventana_base.setSize(funcion_base.ventana_base.getWidth()+1,funcion_base.ventana_base.getHeight()+1);  
+    		this.dispose();
+        }
+    }
+}

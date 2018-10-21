@@ -1,0 +1,19 @@
+#BlueJ class context
+comment0.params=f
+comment0.target=FuncionPlantilla(FuncionBase)
+comment1.target=void\ guardarPlantilla()
+comment10.params=s
+comment10.target=void\ setSelectorplantilla(VentanaPlantilla)
+comment2.params=p
+comment2.target=void\ Guardar(String)
+comment3.target=void\ recuperarPlantilla()
+comment4.params=dir
+comment4.target=void\ Abrir(String)
+comment5.target=void\ cargarPlantilla()
+comment6.target=void\ insertarPlantilla()
+comment7.params=dir
+comment7.target=void\ Insertar(String)
+comment8.target=void\ cargarInsercion()
+comment9.params=dir
+comment9.target=void\ insertarEstandar(String)
+numComments=11

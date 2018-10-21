@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.target=VentanaScript()
+comment1.params=ae
+comment1.target=void\ actionPerformed(ActionEvent)
+comment2.params=s
+comment2.target=void\ setBuffer(StringBuffer)
+comment3.target=void\ llenarAreabuffer()
+comment4.params=fs
+comment4.target=void\ setFuncionscript(FuncionScript)
+numComments=5

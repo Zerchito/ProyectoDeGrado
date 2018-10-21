@@ -1,0 +1,2 @@
+#1.- Usar factores comunes de referencia por su diseño, funcionalidad y aceptación para los usuarios.;
+#2.- Usar estructuras prediseñadas y reutilizarlas mediante modificaciones pertinentes para ser implantadas en aplicaciones nuevas cuyas características funcionales y estéticas sean similares.

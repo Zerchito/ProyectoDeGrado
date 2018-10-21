@@ -1,0 +1,20 @@
+#BlueJ class context
+comment0.params=v
+comment0.target=SComboBox(FuncionBase)
+comment1.params=evt
+comment1.target=void\ formMousePressed(java.awt.event.MouseEvent)
+comment2.params=evt
+comment2.target=void\ formMouseDragged(java.awt.event.MouseEvent)
+comment3.params=evt
+comment3.target=void\ formMouseReleased(java.awt.event.MouseEvent)
+comment4.params=evt
+comment4.target=void\ formMouseMoved(java.awt.event.MouseEvent)
+comment5.params=v
+comment5.target=void\ setVector(Vector)
+comment6.target=Vector\ getVector()
+comment7.params=v
+comment7.target=void\ setPosicionranura(int)
+comment8.target=int\ getPosicionranura()
+comment9.params=v\ s
+comment9.target=StringBuffer\ armarNombre(int,\ String)
+numComments=10

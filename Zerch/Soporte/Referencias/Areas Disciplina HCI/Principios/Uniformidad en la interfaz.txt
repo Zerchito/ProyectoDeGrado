@@ -1,0 +1,6 @@
+#1.- Los elementos deben tener el mismo formato;
+#2.- En línea de comandos los parámetros se deben pasar de la misma forma;
+#3.- La uniformidad facilita el aprendizaje;
+#4.- Eventos similares con atajos ya acostumbrados en otras aplicaciones;
+
+

@@ -1,0 +1,6 @@
+#BlueJ class context
+comment0.target=Stylepad()
+comment1.target=JTextComponent\ createEditor()
+comment2.params=doc\ sc
+comment2.target=void\ initDocument(DefaultStyledDocument,\ StyleContext)
+numComments=3

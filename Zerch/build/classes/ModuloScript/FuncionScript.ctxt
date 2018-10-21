@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.target=FuncionScript()
+comment1.params=r
+comment1.target=void\ setRanura(Ranura)
+comment2.target=void\ Exportar()
+comment3.target=void\ volver()
+comment4.target=void\ guardarScript()
+comment5.params=p
+comment5.target=void\ Guardar(String)
+numComments=6

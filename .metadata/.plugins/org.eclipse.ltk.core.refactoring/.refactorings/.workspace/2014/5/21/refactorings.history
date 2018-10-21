@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;UIServer&apos;" deleteContents="false" description="Delete resource &apos;UIServer&apos;" element1="/UIServer" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1400989277214"/>
+</session>

@@ -1,0 +1,80 @@
+package InterfazBase;
+
+import javax.swing.*;
+import javax.swing.border.*;
+
+public class BotonParticipantes
+{
+
+	boolean clickeado=false;
+	boolean consejero_visible=true;
+
+	PanelChat panel_consejero;
+
+	public BotonOcultar(PanelChat p)
+	{
+		setBorder(new BevelBorder(BevelBorder.RAISED));
+    
+		panel_consejero=p;
+    
+		addMouseListener(new java.awt.event.MouseAdapter() {
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				formMouseClicked(evt);
+			}
+		});  
+
+	    addMouseListener(new java.awt.event.MouseAdapter() {
+	        public void mouseEntered(java.awt.event.MouseEvent evt) {
+	            formMouseEntered(evt);
+	        }
+	    });       
+	    
+	    addMouseListener(new java.awt.event.MouseAdapter() {
+	        public void mouseExited(java.awt.event.MouseEvent evt) {
+	            formMouseExited(evt);
+	        }
+	    });         
+	}
+
+	private void formMouseClicked(java.awt.event.MouseEvent evt) 
+	{
+		setBorder(new SoftBevelBorder(BevelBorder.LOWERED)) ;
+		setClickeado(true);
+	}
+
+	private void formMouseEntered(java.awt.event.MouseEvent evt) 
+	{
+		Icon icono_nodo = new ImageIcon( "Soporte/Imagenes/ocultar2.png" );
+		fijarIcono(icono_nodo);
+		this.setBorder(new EtchedBorder());
+	}
+	
+	private void formMouseExited(java.awt.event.MouseEvent evt) 
+	{
+		Icon icono_nodo = new ImageIcon( "Soporte/Imagenes/ocultar.png" );
+		fijarIcono(icono_nodo);
+		setBorder(new BevelBorder(BevelBorder.RAISED));
+	}
+
+	public void setClickeado(boolean v)
+	{
+		clickeado=v;
+		if(consejero_visible==true)
+		{
+			panel_consejero.panel_centro.setVisible(false); 
+			panel_consejero.panel_sur.setVisible(false);
+			consejero_visible=false;
+		}
+		else if(consejero_visible==false)
+		{
+			panel_consejero.panel_centro.setVisible(true); 
+			panel_consejero.panel_sur.setVisible(true);
+			consejero_visible=true;
+		}
+	}
+
+	public void fijarIcono(Icon icono)
+	{
+		this.setIcon(icono);
+	}    
+}

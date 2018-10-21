@@ -1,0 +1,90 @@
+package Conexion;
+
+import java.awt.BorderLayout;
+import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+
+/**
+ * ventana chat...
+ *
+ * @author zerch
+ */
+public class Chat extends JFrame 
+{
+
+    private JPanel panelCentral;
+    private JPanel panelSud;
+    private JTextArea areaTexto;
+    private JTextField campoTexto;
+    private JButton boton;
+
+    /**
+     * Constructor de la clase Chat
+     */
+    public Chat()
+    {
+        crearComponentes();
+        setVisible(true);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    /**
+     * inicializa y acomoda los elementos de la interfaz grafica
+     */
+    private void crearComponentes()
+    {
+        areaTexto = new JTextArea();
+        areaTexto.setEditable(false);
+
+        panelCentral = new JPanel();
+        panelCentral.setLayout(new BorderLayout());
+        panelCentral.setBorder(new EtchedBorder());
+        panelCentral.setSize(200, 200);
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setViewportView(areaTexto);
+        panelCentral.add(scrollPane, BorderLayout.CENTER);
+
+        panelSud = new JPanel();
+        panelSud.setLayout(new BorderLayout());
+
+        campoTexto = new JTextField(20);
+
+        boton = new JButton();
+        boton.setText("Enviar");
+        
+
+
+        this.setBounds(30, 30, 300, 300);
+        this.setLayout(new BorderLayout());
+        this.add("Center", panelCentral);
+        this.add("South", panelSud);
+        panelSud.add("West", campoTexto);
+        panelSud.add("East", boton);
+    }
+    
+    public void agregarManejadorDeEventos(AdministradorEventos oyente)
+    {
+        boton.addActionListener(oyente);
+        campoTexto.addKeyListener(oyente);
+    }
+    
+    public void actualizarVentana(String mensajes)
+    {
+        areaTexto.setText(mensajes);
+    }
+    
+    public String getMensaje()
+    {
+        return campoTexto.getText();
+    }
+    
+    public void limpiarCampoTexto()
+    {
+        campoTexto.setText("");
+    }
+    
+    public void updateAreaTexto(String mensajes)
+    {
+        areaTexto.setText(mensajes);
+    }
+}

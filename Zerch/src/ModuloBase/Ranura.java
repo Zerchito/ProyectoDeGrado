@@ -1,0 +1,126 @@
+package ModuloBase;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
+
+import SwingWidget.*;
+
+@SuppressWarnings(
+{ "rawtypes", "serial", "unchecked" })
+public class Ranura extends JTabbedPane implements java.io.Serializable
+{
+	public JScrollPane scrolgrilla;
+	public RotuloRanura rotulo_ranura;
+	public JPanel panel_dibujo;
+
+	public FuncionBase funcion_base;
+
+	public VentanaInterna v;
+
+	public int posicion_ranura;
+
+	JComponent contenedor;
+
+	public Vector vector_temporal = new Vector();
+
+	public Vector vector_widgets = new Vector();
+
+	public Ranura(FuncionBase v)
+	{
+		funcion_base = v;
+
+		panel_dibujo = new JPanel();
+		panel_dibujo.setPreferredSize(new Dimension(2000, 1000));
+		panel_dibujo.setBackground(Color.white);
+		panel_dibujo.setLayout(null);
+		scrolgrilla = new JScrollPane(panel_dibujo);
+		scrolgrilla.setWheelScrollingEnabled(true);
+		rotulo_ranura = new RotuloRanura(funcion_base);
+	}
+
+	public void reconstruirEntorno()
+	{
+		for (int a = 0; a < vector_temporal.size(); a++)
+		{
+			JComponent widget_recorrido = (JComponent) vector_temporal
+					.elementAt(a);
+
+			if (widget_recorrido.getClass().getName()
+					.endsWith("VentanaInterna"))
+			{
+				VentanaInterna widget_previo = (VentanaInterna) widget_recorrido;
+				VentanaInterna widget_actual = new VentanaInterna(funcion_base);
+				widget_actual.setLocation(widget_previo.getLocation());
+				widget_actual.setSize(widget_previo.getSize());
+				widget_actual.setTitle("Ventana");
+				widget_actual.setNombre("Ventana");
+				widget_actual.setResizable(true);
+				widget_actual.setClosable(false);
+				widget_actual.setMaximizable(true);
+				widget_actual.setIconifiable(true);
+				widget_actual.setLayout(null);
+
+				widget_actual.setBackground(widget_previo.getBackground());
+				widget_actual.setVisible(true);
+
+				widget_actual.setPosicionranura(posicion_ranura);
+
+				widget_actual.vector_temporal = widget_previo.vector_widgets;
+				widget_actual.reconstruirEntorno();
+
+				panel_dibujo.add(widget_actual);
+
+				vector_widgets.add(widget_actual);
+			}
+
+			if (widget_recorrido.getClass().getName().endsWith("Plantilla"))
+			{
+
+				Plantilla widget_previo = (Plantilla) widget_recorrido;
+				Plantilla widget_actual = new Plantilla(funcion_base);
+				widget_actual.setLocation(widget_previo.getLocation());
+				widget_actual.setSize(widget_previo.getSize());
+				widget_actual.setLayout(null);
+
+				widget_actual.setBackground(widget_previo.getBackground());
+				widget_actual.setVisible(true);
+				widget_actual.setPosicionranura(posicion_ranura);
+				vector_widgets.add(widget_actual);
+			}
+
+			if (widget_recorrido.getClass().getName().endsWith("SPanel"))
+			{
+				SPanel widget_previo = (SPanel) widget_recorrido;
+				SPanel widget_actual = new SPanel(funcion_base);
+				widget_actual.setLocation(widget_previo.getLocation());
+				widget_actual.setSize(widget_previo.getSize());
+				widget_actual.setLayout(null);
+				widget_actual.setPosicionranura(posicion_ranura);
+
+				widget_actual.setBackground(widget_previo.getBackground());
+				widget_actual.setVisible(true);
+				vector_widgets.add(widget_actual);
+			}
+
+		}
+		vector_temporal = new Vector();
+	}
+
+	public void setPosicionranura(int pos, String nombre)
+	{
+		posicion_ranura = pos;
+		rotulo_ranura.setNombre(nombre);
+		rotulo_ranura.setposicionRanura(pos);
+	}
+
+	public int getPosicionranura()
+	{
+		return posicion_ranura;
+	}
+
+	public String getNombre()
+	{
+		return rotulo_ranura.getNombre();
+	}
+}

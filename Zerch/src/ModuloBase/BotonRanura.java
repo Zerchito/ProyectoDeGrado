@@ -1,0 +1,91 @@
+package ModuloBase;
+
+import javax.swing.*;
+import javax.swing.border.*;
+
+@SuppressWarnings("serial")
+public class BotonRanura extends JLabel implements java.io.Serializable
+{
+
+	boolean clickeado = false;
+	RotuloRanura rotulo_ranura_actual;
+
+	public BotonRanura(RotuloRanura p)
+	{
+		setBorder(new BevelBorder(BevelBorder.RAISED));
+		rotulo_ranura_actual = p;
+		addMouseListener(new java.awt.event.MouseAdapter()
+		{
+			public void mouseClicked(java.awt.event.MouseEvent evt)
+			{
+				formMouseClicked(evt);
+			}
+		});
+
+		addMouseListener(new java.awt.event.MouseAdapter()
+		{
+			public void mouseEntered(java.awt.event.MouseEvent evt)
+			{
+				formMouseEntered(evt);
+			}
+		});
+
+		addMouseListener(new java.awt.event.MouseAdapter()
+		{
+			public void mouseExited(java.awt.event.MouseEvent evt)
+			{
+				formMouseExited(evt);
+			}
+		});
+	}
+
+	private void formMouseClicked(java.awt.event.MouseEvent evt)
+	{
+		setBorder(new SoftBevelBorder(BevelBorder.LOWERED));
+		setClickeado(true);
+	}
+
+	private void formMouseEntered(java.awt.event.MouseEvent evt)
+	{
+		Icon icono_nodo = new ImageIcon("Soporte/Imagenes/cerrar3.png");
+		fijarIcono(icono_nodo);
+		this.setBorder(new EtchedBorder());
+	}
+
+	private void formMouseExited(java.awt.event.MouseEvent evt)
+	{
+		Icon icono_nodo = new ImageIcon("Soporte/Imagenes/cerrar2.png");
+		fijarIcono(icono_nodo);
+		setBorder(new BevelBorder(BevelBorder.RAISED));
+	}
+
+	@SuppressWarnings(
+	{ "static-access", "unchecked" })
+	public void setClickeado(boolean v)
+	{
+		clickeado = v;
+		JOptionPane jopcontinuar = new JOptionPane();
+		int confirmcontinuar = jopcontinuar.showConfirmDialog(null,
+				"La Ranura: " + rotulo_ranura_actual.getNombre()
+						+ ". aun contiene elementos... Desea Continuar?");
+		if (confirmcontinuar == 0)
+		{
+			rotulo_ranura_actual.funcion_base.ventana_base.carga_ranuras
+					.removeTabAt(rotulo_ranura_actual.getPosicionRanura());
+			rotulo_ranura_actual.funcion_base.ventana_base.carga_ranuras
+					.insertTab("null", null, null, null,
+							rotulo_ranura_actual.posicion_ranura);
+			rotulo_ranura_actual.funcion_base.vector_ranuras
+					.removeElementAt(rotulo_ranura_actual.posicion_ranura);
+			rotulo_ranura_actual.funcion_base.vector_ranuras.insertElementAt(
+					null, rotulo_ranura_actual.posicion_ranura);
+
+		}
+
+	}
+
+	public void fijarIcono(Icon icono)
+	{
+		this.setIcon(icono);
+	}
+}

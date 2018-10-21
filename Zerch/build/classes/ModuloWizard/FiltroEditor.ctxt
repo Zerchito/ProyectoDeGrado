@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=FiltroEditor()
+comment1.params=extension
+comment1.target=FiltroEditor(String)
+comment10.params=b
+comment10.target=void\ setExtensionListInDescription(boolean)
+comment11.target=boolean\ isExtensionListInDescription()
+comment2.params=extension\ description
+comment2.target=FiltroEditor(String,\ String)
+comment3.params=filters
+comment3.target=FiltroEditor(String[])
+comment4.params=filters\ description
+comment4.target=FiltroEditor(String[],\ String)
+comment5.params=f
+comment5.target=boolean\ accept(File)
+comment6.params=f
+comment6.target=String\ getExtension(File)
+comment7.params=extension
+comment7.target=void\ addExtension(String)
+comment8.target=String\ getDescription()
+comment9.params=description
+comment9.target=void\ setDescription(String)
+numComments=12

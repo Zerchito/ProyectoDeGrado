@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.params=doc\ styles
+comment0.target=Referencia(DefaultStyledDocument,\ StyleContext)
+comment1.target=void\ loadDocument()
+comment2.params=p
+comment2.target=void\ addParagrafo(Paragrafo)
+comment3.target=void\ createStyles()
+comment4.target=void\ llenarParagrafo()
+comment5.target=void\ llenarTitulo()
+comment6.target=void\ llenarContenido()
+comment7.target=void\ llenarGrafico()
+numComments=8

@@ -1,0 +1,25 @@
+#BlueJ class context
+comment0.params=v
+comment0.target=SRadioButton(FuncionBase)
+comment1.params=evt
+comment1.target=void\ formMousePressed(java.awt.event.MouseEvent)
+comment10.params=v
+comment10.target=void\ setDestino(int)
+comment11.target=int\ getOrigen()
+comment12.target=int\ getDestino()
+comment2.params=evt
+comment2.target=void\ formMouseDragged(java.awt.event.MouseEvent)
+comment3.params=evt
+comment3.target=void\ formMouseReleased(java.awt.event.MouseEvent)
+comment4.params=evt
+comment4.target=void\ formMouseClicked(java.awt.event.MouseEvent)
+comment5.params=evt
+comment5.target=void\ formMouseMoved(java.awt.event.MouseEvent)
+comment6.params=v
+comment6.target=void\ setPosicionranura(int)
+comment7.target=int\ getPosicionranura()
+comment8.params=v\ s
+comment8.target=StringBuffer\ armarNombre(int,\ String)
+comment9.params=v
+comment9.target=void\ setOrigen(int)
+numComments=13

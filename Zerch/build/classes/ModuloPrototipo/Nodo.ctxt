@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.params=r
+comment0.target=Nodo(FuncionPrototipo)
+comment1.params=g
+comment1.target=void\ dibujar(Graphics)
+comment2.params=px\ py
+comment2.target=boolean\ pertenece(int,\ int)
+comment3.params=v
+comment3.target=void\ setPosicion(int)
+numComments=4

@@ -1,0 +1,448 @@
+package Interfaz;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.rmi.RemoteException;
+
+import javax.swing.border.*;
+
+import Conexion.AdministradorEventos;
+import InterfazBase.*;
+import ModuloBase.*;
+
+public class VentanaPrincipal extends JFrame implements ActionListener
+{
+
+	private static final long serialVersionUID = 1L;
+	// Barra menu!
+	public JMenuBar menubar_total;
+	public JMenu menu_archivo;
+	public JMenu menu_edicion;
+	public JMenu menu_herramientas;
+	public JMenu menu_ayuda;
+	// menu archivo
+	public JMenuItem menuitem_nuevo_entorno;
+	public JMenuItem menuitem_recuperar_entorno;
+	public JMenuItem menuitem_guardar_entorno;
+	public JMenuItem menuitem_salir;
+	// menu edicion
+	public JMenuItem menuitem_exportar;
+
+	// menu herramientas
+	public JMenuItem menuitem_bitacora;
+	public JMenuItem menuitem_herramientas_trainer;
+
+	public JMenu menu_prototipo;
+	public JMenuItem menuitem_herramientas_prototipored;
+	public JMenuItem menuitem_herramientas_prototipoeventos_activado;
+	public JMenuItem menuitem_herramientas_prototipoeventos_desactivado;
+
+	// Menu ayuda
+	public JMenuItem menuitem_ayuda_temas;
+
+	// paneles principales
+	public JPanel panel_centro;
+	public JPanel panel_oeste;
+	public JPanel panel_sud;
+	public JPanel panel_sud_centro;
+	public JPanel panel_sud_sud;
+
+	// paneles secundarios oeste
+	public PanelPropiedades panel_propiedad;
+	public PanelColorFondo color_selector;
+	public PanelColorTexto color_selector_texto;
+	public PanelFuenteTexto fuente_texto;
+	public PanelEventos panel_eventos;
+
+	// paneles secundarios centro_norte
+	public PanelOpciones panel_opciones;
+
+	// paneles secundarios sud
+	public PanelClick panel_click;
+	public PanelPuntero panel_puntero;
+	public PanelIndicador panel_indicador;
+	// paneles secundarios sud_centro
+	public PanelChat panel_chat;
+	// paneles contenedores centro_centro
+	public JTabbedPane carga_ranuras;
+	public JPanel carga_pantallas;
+
+	public FuncionBase funcion_base;
+
+	public SeparaArgumento separa_argumento;
+
+	public VentanaPrincipal(String usuario)
+	{
+		funcion_base = new FuncionBase(this);
+
+		setTitle("Sacui: " + usuario);
+		setVisible(true);
+		setLayout(new BorderLayout());
+
+		setMinimumSize(new Dimension(750, 560));
+		setExtendedState(MAXIMIZED_BOTH);
+
+		ImageIcon icono = new ImageIcon("Soporte/Imagenes/icono.PNG");
+		this.setIconImage(icono.getImage());
+
+		menubar_total = new JMenuBar();
+
+		menu_archivo = new JMenu("Archivo");
+		menu_edicion = new JMenu("Edicion");
+		menu_herramientas = new JMenu("Herramientas");
+		menu_ayuda = new JMenu("Ayuda");
+
+		menuitem_nuevo_entorno = new JMenuItem("Nuevo Frame");
+		menuitem_nuevo_entorno.setMnemonic(KeyEvent.VK_N);
+		menuitem_nuevo_entorno.setAccelerator(
+				KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+		menu_archivo.add(menuitem_nuevo_entorno);
+
+		menuitem_recuperar_entorno = new JMenuItem("Recuperar Entorno");
+		menuitem_recuperar_entorno.setMnemonic(KeyEvent.VK_R);
+		menuitem_recuperar_entorno.setAccelerator(
+				KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+		menu_archivo.add(menuitem_recuperar_entorno);
+
+		menuitem_guardar_entorno = new JMenuItem("Guardar Entorno");
+		menuitem_guardar_entorno.setMnemonic(KeyEvent.VK_G);
+		menuitem_guardar_entorno.setAccelerator(
+				KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
+		menu_archivo.add(menuitem_guardar_entorno);
+
+		menuitem_salir = new JMenuItem("Salir");
+		menuitem_salir.setMnemonic(KeyEvent.VK_F4);
+		menuitem_salir.setAccelerator(
+				KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
+		menu_archivo.add(menuitem_salir);
+
+		menuitem_exportar = new JMenuItem("Exportar Script");
+		menuitem_exportar.setMnemonic(KeyEvent.VK_X);
+		menuitem_exportar.setAccelerator(
+				KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+		menu_edicion.add(menuitem_exportar);
+
+		menuitem_bitacora = new JMenuItem("Iniciar Bitacora");
+		menuitem_bitacora.setMnemonic(KeyEvent.VK_B);
+		menuitem_bitacora.setAccelerator(
+				KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK));
+		menu_herramientas.add(menuitem_bitacora);
+
+		menuitem_herramientas_trainer = new JMenuItem("Trainer");
+		menuitem_herramientas_trainer.setMnemonic(KeyEvent.VK_T);
+		menuitem_herramientas_trainer.setAccelerator(
+				KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
+		menu_herramientas.add(menuitem_herramientas_trainer);
+
+		menu_prototipo = new JMenu("Prototipo...");
+		menu_herramientas.add(menu_prototipo);
+
+		menuitem_herramientas_prototipored = new JMenuItem("Diagrama de red");
+		menuitem_herramientas_prototipored.setMnemonic(KeyEvent.VK_N);
+		menuitem_herramientas_prototipored.setAccelerator(
+				KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+		menu_prototipo.add(menuitem_herramientas_prototipored);
+
+		menuitem_herramientas_prototipoeventos_activado = new JMenuItem(
+				"Activar modo eventos");
+		menuitem_herramientas_prototipoeventos_activado
+				.setMnemonic(KeyEvent.VK_E);
+		menuitem_herramientas_prototipoeventos_activado.setAccelerator(
+				KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+		menu_prototipo.add(menuitem_herramientas_prototipoeventos_activado);
+
+		menuitem_herramientas_prototipoeventos_desactivado = new JMenuItem(
+				"Desactivar modo eventos");
+		menu_prototipo.add(menuitem_herramientas_prototipoeventos_desactivado);
+
+		menuitem_ayuda_temas = new JMenuItem("Temas");
+		menu_ayuda.add(menuitem_ayuda_temas);
+
+		menubar_total.add(menu_archivo);
+		menubar_total.add(menu_edicion);
+		menubar_total.add(menu_herramientas);
+		menubar_total.add(menu_ayuda);
+		setJMenuBar(menubar_total);
+
+		panel_oeste = new JPanel();
+		panel_oeste.setLayout(null);
+		panel_oeste.setPreferredSize(new java.awt.Dimension(202, 0));
+		add("West", panel_oeste);
+
+		panel_propiedad = new PanelPropiedades(funcion_base);
+		panel_propiedad.setLocation(0, 3);
+		panel_oeste.add(panel_propiedad);
+
+		panel_centro = new JPanel();
+		panel_centro.setBackground(new Color(140, 180, 225));
+		panel_centro.setLayout(new BorderLayout());
+		panel_centro.setBorder(new SoftBevelBorder(BevelBorder.LOWERED));
+		add("Center", panel_centro);
+
+		panel_sud = new JPanel();
+		panel_sud.setLayout(new BorderLayout());
+		panel_sud.setBackground(Color.white);
+		add("South", panel_sud);
+
+		panel_opciones = new PanelOpciones(funcion_base);
+		panel_opciones.setLocation(0, 0);
+		panel_centro.add("North", panel_opciones);
+
+		panel_chat = new PanelChat(funcion_base);
+		panel_centro.add("South", panel_chat);
+
+		panel_sud_sud = new JPanel();
+		panel_sud_sud.setVisible(true);
+		panel_sud_sud.setLayout(null);
+		panel_sud_sud.setPreferredSize(new java.awt.Dimension(500, 30));
+		// panel_sud_sud.setBorder(new EtchedBorder());
+		panel_sud.add("South", panel_sud_sud);
+
+		panel_sud_centro = new JPanel();
+		panel_sud_centro.setLayout(null);
+		panel_sud.add("Center", panel_sud_centro);
+
+		carga_ranuras = new JTabbedPane();
+		carga_ranuras.setBackground(Color.white);
+		panel_centro.add("Center", carga_ranuras);
+
+		color_selector = new PanelColorFondo(funcion_base);
+		color_selector.label_muestra.setText("Color - Fondo:");
+		color_selector.setLocation(0, 135);
+		color_selector.setLayout(null);
+		panel_oeste.add(color_selector);
+
+		color_selector_texto = new PanelColorTexto(funcion_base);
+		color_selector_texto.label_muestra.setText("Color - Texto:");
+		color_selector_texto.setLocation(0, 227);
+		color_selector_texto.setLayout(null);
+		panel_oeste.add(color_selector_texto);
+
+		fuente_texto = new PanelFuenteTexto(funcion_base);
+		fuente_texto.label_muestra.setText("Fuente:");
+		fuente_texto.setLocation(0, 320);
+		fuente_texto.setLayout(null);
+		panel_oeste.add(fuente_texto);
+
+		panel_eventos = new PanelEventos(funcion_base);
+		panel_eventos.setLocation(0, 393);
+		panel_eventos.setLayout(null);
+		panel_oeste.add(panel_eventos);
+
+		panel_puntero = new PanelPuntero();
+		panel_puntero.setLocation(5, 0);
+		panel_sud_sud.add(panel_puntero);
+
+		panel_click = new PanelClick();
+		panel_click.setLocation(155, 0);
+		panel_sud_sud.add(panel_click);
+
+		panel_indicador = new PanelIndicador();
+		panel_indicador.setLocation(290, 0);
+		panel_sud_sud.add(panel_indicador);
+
+		separa_argumento = new SeparaArgumento(this);
+
+		menuitem_recuperar_entorno.addActionListener(this);
+		menuitem_guardar_entorno.addActionListener(this);
+		menuitem_exportar.addActionListener(this);
+		menuitem_herramientas_trainer.addActionListener(this);
+		menuitem_herramientas_prototipored.addActionListener(this);
+		menuitem_herramientas_prototipoeventos_activado.addActionListener(this);
+		menuitem_herramientas_prototipoeventos_desactivado
+				.addActionListener(this);
+		menuitem_bitacora.addActionListener(this);
+		menuitem_salir.addActionListener(this);
+		menuitem_ayuda_temas.addActionListener(this);
+
+		this.setSize(this.getWidth() - 1, this.getHeight() - 1);
+
+		addWindowListener(new WindowAdapter()
+		{
+			public void windowClosing(WindowEvent e)
+			{
+				System.exit(0);
+				/*try
+				{
+					funcion_base.verificarCerrado();
+				} catch (RemoteException e1)
+				{
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}*/
+			}
+
+		});
+	}
+
+	// Acciones para los Eventos
+	public void actionPerformed(ActionEvent ae)
+	{
+		if (ae.getSource() == menuitem_salir)
+		{
+			try
+			{
+				funcion_base.salir();
+			} catch (RemoteException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		if (ae.getSource() == menuitem_guardar_entorno)
+		{
+			funcion_base.guardarEntorno();
+		}
+
+		if (ae.getSource() == menuitem_recuperar_entorno)
+		{
+			funcion_base.recuperarEntorno();
+		}
+
+		if (ae.getSource() == menuitem_exportar)
+		{
+			funcion_base.exportarScript();
+		}
+
+		if (ae.getSource() == menuitem_herramientas_trainer)
+		{
+			funcion_base.iniciarTrainer();
+		}
+		if (ae.getSource() == menuitem_herramientas_prototipored)
+		{
+			funcion_base.iniciarPrototipo();
+		}
+
+		if (ae.getSource() == menuitem_herramientas_prototipoeventos_activado)
+		{
+			funcion_base.iniciarEventos();
+		}
+		if (ae.getSource() == menuitem_herramientas_prototipoeventos_desactivado)
+		{
+			funcion_base.detenerEventos();
+		}
+
+		if (ae.getSource() == menuitem_ayuda_temas)
+		{
+			funcion_base.iniciarAyuda();
+		}
+	}
+
+	public void agregarManejadorDeEventos(AdministradorEventos oyente)
+	{
+		panel_chat.agregarManejadorDeEventos(oyente);
+		menuitem_nuevo_entorno.addActionListener(oyente);
+		funcion_base.addAdminsitadorE(oyente);
+	}
+
+	public String getMensaje()
+	{
+		return panel_chat.getMensaje();
+	}
+
+	public void limpiarCampoTexto()
+	{
+		panel_chat.limpiarCampoTexto();
+	}
+
+	public void updateAreaTexto(String mensajes)
+	{
+		panel_chat.updateAreaTexto(mensajes);
+	}
+
+	public void updateNuevoEntorno(String nombre)
+	{
+		funcion_base.nuevoEntorno(nombre);
+	}
+
+	public void nuevoLabel(int x, int y, int w, int h, int r, String texto)
+	{
+		funcion_base.agregarLabel(x, y, w, h, r, texto);
+	}
+
+	public void nuevoPanel(int x, int y, int w, int h, int r)
+	{
+		funcion_base.agregarPanel(x, y, w, h, r);
+	}
+
+	public void nuevoButton(int x, int y, int w, int h, int r, String t)
+	{
+		funcion_base.agregarButton(x, y, w, h, r, t);
+	}
+
+	public void nuevoRadioButton(int x, int y, int w, int h, int r, String t)
+	{
+		funcion_base.agregarRadioButton(x, y, w, h, r, t);
+	}
+
+	public void nuevoCheckBox(int x, int y, int w, int h, int r, String t)
+	{
+		funcion_base.agregarCheckBox(x, y, w, h, r, t);
+	}
+
+	public void nuevoTextField(int x, int y, int w, int h, int r, String t)
+	{
+		funcion_base.agregarTextField(x, y, w, h, r, t);
+	}
+
+	public void nuevoPasswordField(int x, int y, int w, int h, int r, String t)
+	{
+		funcion_base.agregarPasswordField(x, y, w, h, r, t);
+	}
+
+	public void nuevoTextArea(int x, int y, int w, int h, int r, String t)
+	{
+		funcion_base.agregarTextArea(x, y, w, h, r, t);
+	}
+
+	public void nuevoList(int x, int y, int w, int h, int r, String t)
+	{
+		funcion_base.agregarList(x, y, w, h, r, t);
+	}
+
+	public void nuevoComboBox(int x, int y, int w, int h, int r, String t)
+	{
+		funcion_base.agregarComboBox(x, y, w, h, r, t);
+	}
+
+	public void nuevoSlider(int x, int y, int w, int h, int r, String t)
+	{
+		funcion_base.agregarSlider(x, y, w, h, r, t);
+	}
+
+	public void nuevoProgresBar(int x, int y, int w, int h, int r, String t)
+	{
+		funcion_base.agregarProgresBar(x, y, w, h, r, t);
+	}
+
+	public void bloquearWidget(int posicionWidget, boolean estado)
+	{
+		funcion_base.bloquearWidget(posicionWidget, estado);
+	}
+
+	public void moverWidget(int posicionWidget, int x, int y, int w, int h)
+	{
+		funcion_base.moverWidget(posicionWidget, x, y, w, h);
+	}
+
+	public void actualizarWidget(int posicion, int valor)
+	{
+		funcion_base.actualizarWidget(posicion, valor);
+	}
+
+	public void actualizarWidget(int posicion, String text)
+	{
+		funcion_base.actualizarWidget(posicion, text);
+	}
+
+	public void cambiarColor(int posicion, int r, int g, int b, String tipo)
+	{
+		funcion_base.cambiarColor(posicion, r, g, b, tipo);
+	}
+	public void eliminarElemento(int posicion)
+	{
+		funcion_base.eliminarElemento(posicion);
+	}
+}

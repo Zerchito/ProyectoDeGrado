@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.target=VentanaPrototipo()
+comment1.target=void\ fijarCantidad()
+comment2.params=v
+comment2.target=void\ fijarEnlaces(Vector)
+comment3.target=void\ cerrarEsto()
+comment4.params=fb
+comment4.target=void\ setFuncionBase(FuncionBase)
+comment5.target=void\ buscarEnlaces()
+numComments=6

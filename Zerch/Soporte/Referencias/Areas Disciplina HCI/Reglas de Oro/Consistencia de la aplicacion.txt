@@ -1,0 +1,4 @@
+#1.- Permitir que el usuario realice una tarea en el contexto adecuado;
+#2.- Mantener la consistencia en toda la familia de aplicaciones;
+#3.- Los modelos interactivos anteriores han esperanzado al usuario, no realicemos cambios a menos que exista alguna razón convincente para hacerlo;
+

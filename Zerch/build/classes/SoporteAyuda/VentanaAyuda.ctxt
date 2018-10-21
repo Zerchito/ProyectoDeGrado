@@ -1,0 +1,5 @@
+#BlueJ class context
+comment0.target=VentanaAyuda()
+comment1.params=filen
+comment1.target=void\ HelpMenuActionPerformed(String)
+numComments=2

@@ -1,0 +1,5 @@
+#1.- Llenar espacios en blanco.- Para aplicaciones basadas en formularios de registro con el ingreso de datos funcionales, mediante el uso de campos de texto.;
+#2.- Edición en el lugar.- En aplicaciones que cuentan con cuadros de texto en forma jerárquica, permite la modificación directa.;
+#3.- Búsqueda simple.- Para aplicaciones dedicadas a la búsqueda de objetos, mediante el uso de palabras clave.;
+#4.- Asistente.- Guía al usuario paso a paso durante la realización de tareas complejas, mediante el uso de pantallas de ayuda simples.;
+#5.- Indicador de programa.- Depende del dominio de la aplicación y se basa en indicar cuál es el grado de progreso ante determinadas funciones.;

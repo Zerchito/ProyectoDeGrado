@@ -1,0 +1,8 @@
+#1.- Reducir la demanda de memoria a corto plazo;
+#2.- Establecer valores por defecto útiles;
+#3.- Definir las deficiencias que sean intuitivas;
+#4.- El formato visual de la interfaz se deberá basar en una metáfora del mundo real;
+#5.- Desglosar la información de forma progresiva;
+#6.- nueva insercion prueba;
+#7.- nueva insercion prueba2;
+

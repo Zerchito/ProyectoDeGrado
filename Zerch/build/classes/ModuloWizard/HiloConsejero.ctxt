@@ -1,0 +1,8 @@
+#BlueJ class context
+comment0.params=fb
+comment0.target=HiloConsejero(FuncionBase)
+comment1.target=void\ run()
+comment2.params=pos
+comment2.target=void\ separarReferencias(int)
+comment3.target=void\ cargarFicheros()
+numComments=4

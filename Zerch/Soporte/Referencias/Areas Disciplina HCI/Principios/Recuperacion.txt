@@ -1,0 +1,8 @@
+#1.- Minimizar la probabilidad de cometer errores;
+#2.- Solicitar confirmación ante acciones potencialmente destructivas;
+#3.- Proporcionar opciones para deshacer acciones;
+#4.- Generar puntos de control para retornar a estos en caso de errores u otros;
+
+
+
+

@@ -1,0 +1,20 @@
+#BlueJ class context
+comment0.target=HciEditor()
+comment1.params=ae
+comment1.target=void\ actionPerformed(ActionEvent)
+comment10.params=s
+comment10.target=void\ mostrarMensaje(String)
+comment11.target=void\ cerrarEsto()
+comment2.params=sb
+comment2.target=void\ cargarReferencias(StringBuffer)
+comment3.target=void\ guardarCambios()
+comment4.target=void\ reemplazarReferencia()
+comment5.target=void\ exportarReferencia()
+comment6.params=p
+comment6.target=void\ Guardar(String)
+comment7.target=void\ llenarBuffer()
+comment8.params=p
+comment8.target=void\ setPath(String)
+comment9.params=vt
+comment9.target=void\ setVentanatrainer(VentanaTrainer)
+numComments=12

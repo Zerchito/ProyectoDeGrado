@@ -1,0 +1,2 @@
+#1.- Los esquemas de navegación de una aplicación están representados dentro de la interfaz generalmente en forma de botones.;
+#2.- Estos botones deberán diseñarse de acuerdo al tipo opción que representa, ya sea en forma de texto o mediante un ícono o imagen con el cual se identifique claramente.;
